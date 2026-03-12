@@ -1,0 +1,32 @@
+{
+  "_description": "TOFU/MOFU/BOFU performance tracking. Update manually when you have real numbers.",
+  "_instructions": "Track which funnel stage content is performing. memory-agent.js reads this to adjust weekly content mix.",
+  "last_updated": null,
+  "current_bottleneck": "awareness",
+  "weekly_snapshots": [],
+  "by_stage": {
+    "TOFU": {
+      "posts_last_30_days": 0,
+      "avg_impressions": 0,
+      "best_performing_hook_type": null,
+      "resonance_signals": 0
+    },
+    "MOFU": {
+      "posts_last_30_days": 0,
+      "avg_email_signups": 0,
+      "avg_newsletter_opens": 0,
+      "resonance_signals": 0
+    },
+    "BOFU": {
+      "posts_last_30_days": 0,
+      "avg_conversions": 0,
+      "resonance_signals": 0
+    }
+  },
+  "recommended_mix_next_week": {
+    "TOFU": 60,
+    "MOFU": 30,
+    "BOFU": 10,
+    "note": "Default for new products. Update based on real data."
+  }
+}
