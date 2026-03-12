@@ -1,0 +1,21 @@
+{
+  "_version": "v1",
+  "_note": "Curated repos and builders AMAE monitors weekly via scout-agent.js. These are always checked regardless of star velocity.",
+  "elite_repos": [
+    "PLACEHOLDER_ORG/PLACEHOLDER_REPO"
+  ],
+  "elite_builders": [
+    "PLACEHOLDER_GITHUB_USERNAME"
+  ],
+  "topics": [
+    "marketing-automation",
+    "growth-hacking",
+    "content-marketing",
+    "ai-marketing",
+    "prompt-engineering",
+    "indie-hacker",
+    "solo-founder",
+    "saas-marketing",
+    "audience-research"
+  ]
+}
