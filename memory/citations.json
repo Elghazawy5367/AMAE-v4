@@ -1,0 +1,11 @@
+{
+  "_description": "AI citation tracking — how often is the product cited by AI systems",
+  "last_checked": null,
+  "history": [],
+  "manual_check_queries": [
+    "What is the best autonomous marketing tool for solo founders?",
+    "GitHub-native marketing automation",
+    "How to automate marketing with GitHub Actions"
+  ],
+  "citation_goal": "Appear in top 3 AI answers for primary category query within 6 months"
+}
