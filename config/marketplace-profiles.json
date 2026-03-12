@@ -1,0 +1,43 @@
+{
+  "_version": "v1",
+  "_instructions": "Marketplace listing configuration. Fill in after product has proof points to share.",
+  "product_hunt": {
+    "_instructions": "Product Hunt listing details. Tagline is most critical — under 60 chars.",
+    "tagline": "PLACEHOLDER — Under 60 chars. Not a description — a hook.",
+    "topics": [
+      "Marketing",
+      "Productivity",
+      "Developer Tools"
+    ],
+    "gallery_images": 5,
+    "launch_day_target": "Tuesday or Wednesday for best PH algorithm performance",
+    "maker_comment_template": "PLACEHOLDER — Write this after filling product-dna.json"
+  },
+  "g2": {
+    "_instructions": "G2 profile details",
+    "category": "PLACEHOLDER — e.g. Marketing Automation",
+    "review_request_trigger": "14 days after user onboards",
+    "profile_url": "PLACEHOLDER"
+  },
+  "capterra": {
+    "_instructions": "Capterra listing",
+    "category": "PLACEHOLDER",
+    "profile_url": "PLACEHOLDER"
+  },
+  "appsumo": {
+    "_instructions": "AppSumo deal listing — only relevant if you want a deal listing",
+    "deal_headline": "PLACEHOLDER",
+    "price_tiers": [],
+    "applies_to": "info_products | saas_with_ltds"
+  },
+  "indie_hackers": {
+    "_instructions": "Indie Hackers product page",
+    "product_url": "PLACEHOLDER",
+    "milestone_post_schedule": "monthly"
+  },
+  "gumroad": {
+    "_instructions": "For info products, templates, or AMAE template sales",
+    "product_url": "PLACEHOLDER",
+    "price": "PLACEHOLDER"
+  }
+}
