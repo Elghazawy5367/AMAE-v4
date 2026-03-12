@@ -1,0 +1,51 @@
+# ================================================================ 
+# AMAE — Profile README Live Dashboard Update 
+# Schedule: Daily 6:00am UTC 
+# Updates the GitHub profile README with live campaign stats 
+# ================================================================ 
+ 
+name: Update Profile README Dashboard 
+ 
+on: 
+  schedule: 
+    - cron: '0 6 * * *'   # Daily 6:00am UTC 
+  workflow_dispatch: 
+ 
+permissions: 
+  contents: write 
+ 
+jobs: 
+  update: 
+    name: Update Profile README 
+    runs-on: ubuntu-latest 
+    timeout-minutes: 10 
+ 
+    steps: 
+      - name: Checkout repository 
+        uses: actions/checkout@v4 
+        with: 
+          fetch-depth: 1 
+ 
+      - name: Set up Node.js 20 
+        uses: actions/setup-node@v4 
+        with: 
+          node-version: '20' 
+          cache: 'npm' 
+ 
+      - name: Install dependencies 
+        run: npm ci --prefer-offline 
+ 
+      - name: Run profile README agent 
+        run: node agents/profile-readme-agent.js 
+        env: 
+          GITHUB_TOKEN:       ${{ secrets.GITHUB_TOKEN }} 
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }} 
+ 
+      - name: Commit updated README 
+        run: | 
+          git config user.name  "AMAE Dashboard Bot" 
+          git config user.email "amae-bot@noreply.github.com" 
+          git add memory/ analytics/ docs/ 
+          git diff --cached --quiet && echo "No dashboard changes" || \ 
+            git commit -m "dashboard: live stats update $(date +'%Y-%m-%d') [skip ci]" && \ 
+            git push origin main
