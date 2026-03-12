@@ -1,0 +1,38 @@
+# GitHub Pages configuration 
+title: AMAE — Autonomous Marketing Agentic Engine 
+description: GitHub-native marketing automation for solo founders 
+baseurl: "" 
+url: "https://[your-username].github.io/amae" 
+ 
+# Theme: none — we use custom HTML 
+theme: null 
+ 
+# Blog directory 
+blog: 
+  dir: blog/ 
+ 
+# Exclude from processing 
+exclude: 
+  - node_modules/ 
+  - .github/ 
+  - agents/ 
+  - lib/ 
+  - config/ 
+  - memory/ 
+  - intelligence/ 
+  - campaigns/ 
+  - analytics/ 
+  - templates/ 
+ 
+# Include markdown processing for blog posts 
+markdown: kramdown 
+ 
+# AEO: Structured metadata 
+author: 
+  name: Founder 
+ 
+# Collections 
+collections: 
+  blog: 
+    output: true 
+    permalink: /blog/:name/
