@@ -1,0 +1,30 @@
+{
+  "_description": "TOFU/MOFU/BOFU conversion tracking. Update this manually when you have real data.",
+  "_instructions": "Track which funnel stage is converting. This tells AMAE where to focus content each week.",
+  "current_week": null,
+  "weeks_of_data": 0,
+  "by_stage": {
+    "TOFU": {
+      "content_pieces_last_4_weeks": 0,
+      "avg_impressions": 0,
+      "avg_new_followers": 0,
+      "resonance_signals": 0
+    },
+    "MOFU": {
+      "content_pieces_last_4_weeks": 0,
+      "avg_email_signups": 0,
+      "avg_newsletter_opens": 0,
+      "resonance_signals": 0
+    },
+    "BOFU": {
+      "content_pieces_last_4_weeks": 0,
+      "avg_trial_starts": 0,
+      "avg_conversions": 0,
+      "resonance_signals": 0
+    }
+  },
+  "bottleneck": "awareness",
+  "_bottleneck_options": "awareness | consideration | conversion | retention",
+  "recommendation": "No data yet. Default: 60% TOFU, 30% MOFU, 10% BOFU for new products.",
+  "_how_to_update": "After each week, update the stage metrics with real observed numbers. AMAE memory-agent.js reads this to adjust content mix."
+}
