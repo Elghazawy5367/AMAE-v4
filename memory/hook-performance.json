@@ -1,0 +1,19 @@
+{
+  "_version": "v1",
+  "_note": "Tracks which hook formulas produce resonance signals for THIS specific product. Updated by memory-agent.js when founder logs performance data.",
+  "formulas_tested": [],
+  "best_performing": null,
+  "worst_performing": null,
+  "total_resonance_signals": 0,
+  "_formula_entry_template": {
+    "formula_name": "e.g. confession_plus_waste",
+    "example": "I wasted 3 hours every Sunday...",
+    "platforms_tested": [
+      "linkedin"
+    ],
+    "resonance_signals": 0,
+    "times_used": 0,
+    "first_used": null,
+    "last_used": null
+  }
+}
