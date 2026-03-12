@@ -1,0 +1,84 @@
+# === FILE: .github/workflows/weekly-intelligence.yml ===
+# GAP-001 FIX: Added complete workflow wrapper (was stub of steps only)
+
+name: Weekly Intelligence — Tuesday
+
+on:
+  schedule:
+    - cron: '0 4 * * 2'
+  workflow_dispatch:
+    inputs:
+      week_override:
+        description: 'Week to mine (e.g. 2026-W12). Blank = current week.'
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  intelligence:
+    name: Mine Intelligence
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Step 1 — Copy Excavator (Reddit + GitHub Issues)
+        run: node agents/copy-excavator.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GITHUB_TOKEN:       ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Step 2 — Timing Scout (HN + GitHub Trending + Reddit Rising)
+        run: node agents/timing-scout.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      - name: Step 3 — Competitor Autopsist
+        run: node agents/competitor-autopsist.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GITHUB_TOKEN:       ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Step 4 — Audience Locator
+        run: node agents/audience-locator.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      - name: Step 5 — Hook Miner
+        run: node agents/hook-miner.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      - name: Step 6 — Objection Mapper
+        run: node agents/objection-mapper.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      - name: Step 7 — Intelligence Synthesizer
+        run: node agents/intelligence-synthesizer.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Commit intelligence files
+        run: |
+          git config user.name "AMAE Intelligence"
+          git config user.email "amae-bot@users.noreply.github.com"
+          git add intelligence/weekly/
+          WEEK=$(node --input-type=module -e "import { getCurrentWeek } from './lib/week-utils.js'; process.stdout.write(getCurrentWeek())")
+          git diff --cached --quiet && echo "No new intelligence files" || \
+            git commit -m "intelligence: ${WEEK} brief ready [skip ci]" && git push
