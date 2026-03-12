@@ -1,0 +1,91 @@
+name: "🚀 Launch Campaign — Full Product Launch Sequence" 
+description: "Trigger AMAE's full launch protocol. Generates all launch day content across 
+every channel." 
+title: "LAUNCH: [Product Name] — [Target Launch Date]" 
+labels: ["launch", "auto-generate", "high-priority"] 
+ 
+body: 
+  - type: markdown 
+    attributes: 
+      value: | 
+        ## AMAE Launch Protocol 
+        Fill this in completely. AMAE will generate the full pre-launch, launch-day, and 
+follow-through content sequence. 
+        Allow 30-45 minutes for generation. Review every piece carefully before merging. 
+ 
+        **Launch sequence covers:** 
+        - T-72h: Teaser posts + early-access email 
+        - T-0: Coordinated posts across all platforms + Product Hunt 
+        - T+1 to T+7: Follow-through content (stats, user stories, retrospective) 
+ 
+  - type: input 
+    id: product_name 
+    attributes: 
+      label: Product Name 
+      placeholder: "AMAE" 
+    validations: 
+      required: true 
+ 
+  - type: input 
+    id: launch_date 
+    attributes: 
+      label: Target Launch Date 
+      description: "Format: YYYY-MM-DD. Set to 3+ days from now for pre-launch teaser 
+generation." 
+      placeholder: "2026-04-01" 
+    validations: 
+      required: true 
+ 
+  - type: input 
+    id: producthunt_url 
+    attributes: 
+      label: Product Hunt URL (if scheduled) 
+      placeholder: "https://www.producthunt.com/posts/your-product" 
+ 
+  - type: textarea 
+    id: launch_hook 
+    attributes: 
+      label: The Launch Story 
+      description: | 
+        Why did you build this? What's the founder story behind the launch? 
+        This becomes the backbone of all launch content. 
+        Be real and specific — not marketing language. 
+      placeholder: "I built this because I spent 6 months manually doing [X] every week..." 
+    validations: 
+      required: true 
+ 
+  - type: textarea 
+    id: proof_points 
+    attributes: 
+      label: Launch Proof Points 
+      description: | 
+        What numbers, early users, results, or signals can you share? 
+        Be specific. Even small numbers are powerful if real. 
+      placeholder: | 
+        - 47 beta users tested it 
+        - Average setup time: 12 minutes 
+        - 3 users said "this replaced my marketing agency" 
+    validations: 
+      required: true 
+ 
+  - type: checkboxes 
+    id: platforms 
+    attributes: 
+      label: Platforms to Launch On 
+      options: 
+        - label: Product Hunt 
+        - label: Hacker News (Show HN) 
+        - label: LinkedIn 
+        - label: Twitter/X 
+        - label: Reddit (r/SideProject + r/indiehackers) 
+        - label: TikTok/Reels 
+        - label: Newsletter to full list 
+        - label: GitHub Release 
+        - label: Indie Hackers 
+ 
+  - type: textarea 
+    id: special_instructions 
+    attributes: 
+      label: Special Instructions 
+      placeholder: "e.g. Don't mention pricing yet. Emphasize GitHub-native approach. The 
+target audience is solo founders not marketing teams."
