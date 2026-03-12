@@ -1,0 +1,103 @@
+# ================================================================ 
+# AMAE — On-Demand Campaign from Issue 
+# Triggered when a GitHub Issue is labeled 'campaign' or 'auto-generate' 
+# Reads Issue body → generates targeted campaign → files PR 
+# ================================================================ 
+ 
+name: On-Demand Campaign from Issue 
+ 
+on: 
+  issues: 
+    types: [labeled] 
+ 
+permissions: 
+  contents: write 
+  pull-requests: write 
+  issues: read 
+ 
+jobs: 
+  generate-campaign: 
+    name: Generate Campaign from Issue Brief 
+    runs-on: ubuntu-latest 
+    timeout-minutes: 45 
+ 
+    if: | 
+      contains(github.event.issue.labels.*.name, 'auto-generate') || 
+      contains(github.event.issue.labels.*.name, 'launch') 
+ 
+    steps: 
+      - name: Checkout repository 
+        uses: actions/checkout@v4 
+        with: 
+          fetch-depth: 1 
+ 
+      - name: Set up Node.js 20 
+        uses: actions/setup-node@v4 
+        with: 
+          node-version: '20' 
+          cache: 'npm' 
+ 
+      - name: Install dependencies 
+        run: npm ci --prefer-offline 
+ 
+      - name: Extract Issue context to file 
+        run: | 
+          mkdir -p intelligence/weekly 
+          cat << 'ISSUE_EOF' > intelligence/weekly/issue-brief.json 
+          { 
+            "issue_number": "${{ github.event.issue.number }}", 
+            "title": "${{ github.event.issue.title }}", 
+            "body": "${{ github.event.issue.body }}", 
+            "labels": "${{ toJson(github.event.issue.labels.*.name) }}", 
+            "created_at": "${{ github.event.issue.created_at }}" 
+          } 
+          ISSUE_EOF 
+          echo "Issue brief written." 
+ 
+      - name: Run Intelligence Synthesizer (Issue mode) 
+        run: node agents/intelligence-synthesizer.js --mode=issue 
+        env: 
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }} 
+ 
+      - name: Run Strategy Agent 
+        run: node agents/strategy-agent.js 
+        env: 
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }} 
+ 
+      - name: Run Content Factory 
+        run: node agents/content-factory.js 
+        env: 
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }} 
+ 
+      - name: Run Guardrail Agent 
+        run: node agents/guardrail-agent.js 
+        env: 
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }} 
+ 
+      - name: Get week and issue number 
+        id: meta 
+        run: | 
+          echo "WEEK=$(date +'%Y-W%V')" >> $GITHUB_OUTPUT 
+          echo "ISSUE=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT 
+ 
+      - name: Create Pull Request 
+        uses: peter-evans/create-pull-request@v6 
+        with: 
+          token: ${{ secrets.GITHUB_TOKEN }} 
+          branch: campaign/issue-${{ steps.meta.outputs.ISSUE }}-${{ 
+steps.meta.outputs.WEEK }} 
+          base: main 
+          commit-message: "campaign: on-demand from issue #${{ steps.meta.outputs.ISSUE 
+}}" 
+          title: "📋 On-Demand Campaign — Issue #${{ steps.meta.outputs.ISSUE }}" 
+          body: | 
+            ## On-Demand Campaign 
+            Generated from Issue #${{ github.event.issue.number }}: [${{ github.event.issue.title 
+}}](${{ github.event.issue.html_url }}) 
+ 
+            **Review all content before merging.** 
+            Reddit and Quora drafts: post manually. 
+            Newsletter: review in Beehiiv and send manually. 
+ 
+            Closes #${{ github.event.issue.number }} 
+          labels: campaign
