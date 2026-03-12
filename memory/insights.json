@@ -1,0 +1,14 @@
+{
+  "_version": "v1",
+  "_note": "Written automatically by memory-agent.js. Read by intelligence-synthesizer.js before each campaign. Do not edit manually.",
+  "last_updated": null,
+  "weeks_tracked": 0,
+  "weeks_without_resonance": 0,
+  "what_is_working": [],
+  "what_is_not_working": [],
+  "top_performing_hooks": [],
+  "platforms_with_resonance": [],
+  "recommendation": "No performance data yet. Default: TOFU awareness content on primary platform. Focus on the exact language in copy-ammunition.md.",
+  "alert": null,
+  "_alert_values": "null | '6_week_warning' | 'desire_section_needs_revision'"
+}
