@@ -1,0 +1,37 @@
+{
+  "_version": "v1",
+  "_note": "Updated by the founder or by a future analytics agent. Tracks real resonance signals — not vanity metrics.",
+  "_resonance_signals": "What counts: comments saying 'this is exactly my situation', DMs asking for info, unprompted shares, replies with someone's own version of the frustration. NOT: likes, impressions, follower count.",
+  "last_updated": null,
+  "weeks_tracked": 0,
+  "platforms": {
+    "linkedin": {
+      "posts_published": 0,
+      "resonance_signals_total": 0,
+      "avg_substantive_comments": 0,
+      "best_performing_week": null,
+      "notes": ""
+    },
+    "twitter": {
+      "threads_published": 0,
+      "resonance_signals_total": 0,
+      "avg_replies_hour_1": 0,
+      "best_performing_week": null,
+      "notes": ""
+    },
+    "reddit": {
+      "posts_published": 0,
+      "resonance_signals_total": 0,
+      "notes": ""
+    },
+    "newsletter": {
+      "issues_sent": 0,
+      "resonance_signals_total": 0,
+      "notes": ""
+    }
+  },
+  "resonance_signals_total": 0,
+  "best_performing_week": null,
+  "best_performing_hook": null,
+  "weeks_without_resonance": 0
+}
