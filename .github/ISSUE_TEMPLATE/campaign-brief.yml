@@ -1,0 +1,109 @@
+# GitHub Issue Template — Campaign Brief 
+# This is the GitHub-native UX: open an Issue → triggers a campaign 
+# AMAE reads the Issue body, generates targeted content, files a PR 
+ 
+name: "📋 Campaign Brief — Generate Content" 
+description: "Tell AMAE what to focus on this week. Creates a targeted campaign PR." 
+title: "Campaign: [describe the angle or topic]" 
+labels: ["campaign", "auto-generate"] 
+ 
+body: 
+  - type: markdown 
+    attributes: 
+      value: | 
+        ## AMAE Campaign Brief 
+        Fill in this form. When you submit, the `on-issue-campaign.yml` workflow fires and 
+generates a targeted campaign. 
+        A PR will appear within 20 minutes with all content ready for your review. 
+ 
+  - type: dropdown 
+    id: campaign_type 
+    attributes: 
+      label: Campaign Type 
+      description: What kind of campaign is this? 
+      options: 
+        - "Weekly standard (use Tuesday's intelligence brief)" 
+        - "Trend hijack (capitalize on something trending NOW)" 
+        - "Launch push (product is launching or shipping)" 
+        - "Competitor response (respond to a competitor move)" 
+        - "Milestone celebration (share a real number or win)" 
+        - "Community seed (value-first post for specific community)" 
+    validations: 
+      required: true 
+ 
+  - type: dropdown 
+    id: hero_platform 
+    attributes: 
+      label: Hero Platform This Week 
+      description: Which platform gets the most energy? 
+      options: 
+        - "LinkedIn (professionals, B2B, depth)" 
+        - "Twitter/X (builders, founders, speed)" 
+        - "Reddit (community trust, AEO value)" 
+        - "TikTok/Reels (awareness, reach)" 
+        - "Newsletter (nurture, conversion)" 
+        - "YouTube (authority, long-form)" 
+        - "AEO Blog Article (search + AI citation)" 
+        - "Let AMAE decide (use synthesis brief)" 
+    validations: 
+      required: true 
+ 
+  - type: dropdown 
+    id: funnel_stage 
+    attributes: 
+      label: Funnel Priority 
+      options: 
+        - "TOFU — Awareness (they don't know me yet)" 
+        - "MOFU — Consideration (they know me, building trust)" 
+        - "BOFU — Conversion (ready to act)" 
+        - "Balanced (let funnel-router decide)" 
+    validations: 
+      required: true 
+ 
+  - type: textarea 
+    id: the_angle 
+    attributes: 
+      label: The Angle 
+      description: | 
+        What is the specific angle, insight, or message for this campaign? 
+        Be as specific as possible. Vague angles produce generic content. 
+        Example: "Our tool cut a user's weekly reporting from 4 hours to 15 minutes — use this 
+as the hero proof point" 
+      placeholder: "Describe the specific angle, story, insight, or hook you want to lead with..." 
+    validations: 
+      required: true 
+ 
+  - type: textarea 
+    id: verbatim_hook 
+    attributes: 
+      label: Verbatim Hook (optional) 
+      description: | 
+        If you heard a real customer say something perfect — paste it here verbatim. 
+        AMAE will start every piece with this phrase (adapted minimally). 
+        Leave blank to use this week's intelligence brief hook. 
+      placeholder: "Paste the exact phrase..." 
+ 
+  - type: dropdown 
+    id: psychological_lever 
+    attributes: 
+      label: Psychological Lever 
+      description: Which lever to pull this week? 
+      options: 
+        - "Loss Aversion — what they lose by not acting" 
+        - "Social Proof — who else like them is doing this" 
+        - "Authority — your expertise and proof" 
+        - "FOMO — what happens if they wait" 
+        - "Identity — who they become by using this" 
+        - "Reciprocity — give value before asking" 
+        - "Let synthesis brief decide" 
+    validations: 
+      required: true 
+ 
+  - type: textarea 
+    id: special_instructions 
+    attributes: 
+      label: Special Instructions (optional) 
+      description: Anything else AMAE should know? Tone notes, things to avoid, specific 
+proof points to include? 
+      placeholder: "e.g. Include the stat about 15-minute setup. Avoid mentioning pricing. 
+Make Reddit post specifically for r/SaaS."
