@@ -1,0 +1,31 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>AMAE — Campaign Dashboard</title> 
+  <style> 
+    * { box-sizing: border-box; margin: 0; padding: 0; } 
+    body { font-family: -apple-system, sans-serif; background: #f9fafb; color: #111; } 
+    .header { background: white; border-bottom: 1px solid #e5e7eb; padding: 1rem 1.5rem; } 
+    .header h1 { font-size: 1.1rem; font-weight: 700; } 
+    .main { max-width: 960px; margin: 0 auto; padding: 1.5rem; } 
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 
+1rem; } 
+    .card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; } 
+    .big-num { font-size: 2.5rem; font-weight: 700; line-height: 1; } 
+    .label { font-size: 0.8rem; color: #6b7280; margin-top: 4px; } 
+    h2 { font-size: 1rem; font-weight: 600; margin: 1.5rem 0 0.75rem; } 
+    .item { padding: 0.6rem; background: #f0fdf4; border-left: 3px solid #16a34a; 
+margin-bottom: 6px; font-size: 0.85rem; border-radius: 0 6px 6px 0; } 
+    .tag { display: inline-block; background: #dbeafe; color: #1d4ed8; border-radius: 99px; 
+padding: 2px 8px; font-size: 0.75rem; } 
+  </style> 
+</head> 
+<body> 
+  <div class="header"><h1>AMAE Dashboard</h1></div> 
+  <div class="main" id="app"><p 
+style="color:#6b7280;text-align:center;padding:3rem">Loading…</p></div> 
+  <script type="module" src="./app.js"></script> 
+</body> 
+</html>
