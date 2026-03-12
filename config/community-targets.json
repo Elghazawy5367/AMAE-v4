@@ -1,0 +1,53 @@
+{
+  "_version": "v1",
+  "_instructions": "Communities where your ICP hangs out. AMAE generates content for these communities. You post manually.",
+  "_add_your_communities": "Replace these placeholders with real communities for your ICP",
+  "reddit": [
+    {
+      "subreddit": "r/PLACEHOLDER_1",
+      "why": "PLACEHOLDER — why your ICP is here",
+      "rules_summary": "PLACEHOLDER — key rules about self-promotion",
+      "best_format": "long-form story with specific outcome",
+      "risk_level": "medium",
+      "contribution_first": true,
+      "auto_post": false
+    },
+    {
+      "subreddit": "r/PLACEHOLDER_2",
+      "why": "PLACEHOLDER",
+      "rules_summary": "PLACEHOLDER",
+      "best_format": "how-to or resource post",
+      "risk_level": "low",
+      "contribution_first": true,
+      "auto_post": false
+    }
+  ],
+  "discord": [
+    {
+      "server": "PLACEHOLDER Discord Server",
+      "invite_url": "PLACEHOLDER — if public",
+      "channel": "#tools-and-resources",
+      "why": "PLACEHOLDER",
+      "approach": "Answer 3 questions before mentioning product",
+      "auto_post": false
+    }
+  ],
+  "slack": [
+    {
+      "workspace": "PLACEHOLDER Slack Community",
+      "channel": "#tools",
+      "why": "PLACEHOLDER",
+      "auto_post": false
+    }
+  ],
+  "facebook_groups": [],
+  "posting_rules": {
+    "global": "Always contribute value before mentioning your product",
+    "minimum_contributions_before_promotion": 5,
+    "promotion_frequency": "once per month maximum in any single community",
+    "never": [
+      "copy-paste the same post to multiple communities",
+      "use 'check out my product' as opener"
+    ]
+  }
+}
