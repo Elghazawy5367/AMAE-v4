@@ -1,0 +1,228 @@
+{
+  "_version": "v1",
+  "_updated": "2026-Q1",
+  "_source": "Compiled from platform engineering blogs, creator economy research, and A/B test data. Updated by Evolution System when new confirmed data surfaces.",
+  "linkedin": {
+    "max_chars": 1800,
+    "optimal_chars": 1200,
+    "external_links": "NEVER — not in post body, not in first comment. Confirmed 68% reach reduction across multiple A/B tests.",
+    "link_strategy": "No links at all for reach. If you must link, only in first comment on posts where reach doesn't matter.",
+    "hook_rules": {
+      "never_start_with": [
+        "I ",
+        "We ",
+        "Our ",
+        "Today "
+      ],
+      "winning_formats": [
+        "Specific number + claim",
+        "Contrarian statement",
+        "Bold declarative"
+      ],
+      "avoid": [
+        "Question hooks — low dwell time on LinkedIn"
+      ]
+    },
+    "best_formats_2026": [
+      "text_post_line_breaks",
+      "carousel_pdf",
+      "document_post"
+    ],
+    "carousel_specs": {
+      "slides": "8-10 max",
+      "dimensions": "1080x1080px",
+      "upload_as": "PDF",
+      "text_per_slide": "Under 30 words"
+    },
+    "algorithm_signals_ranked": [
+      "dwell_time",
+      "saves",
+      "comments",
+      "reactions",
+      "reposts"
+    ],
+    "post_frequency": "3-4 per week — more than 4 reduces per-post reach",
+    "optimal_times_utc": [
+      "07:00",
+      "12:00",
+      "17:00"
+    ],
+    "optimal_days": [
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ]
+  },
+  "twitter_x": {
+    "tweet_max_chars": 280,
+    "thread_optimal_length": "7-9 tweets",
+    "thread_structure": "Tweet 1: Hook (no link) → Tweets 2-6: numbered value points (one idea each) → Tweet 7: TL;DR summary → Tweet 8: CTA with link",
+    "link_placement": "LAST tweet only for threads. Never tweet 1.",
+    "hook_char_target": "Under 200 chars — leaves room for engagement in replies",
+    "algorithm_2026": "Reply volume in first 60 minutes is primary reach signal. Post when your audience is online.",
+    "image_impact": "+35% engagement with single relevant image — real screenshot or data, not stock",
+    "optimal_times_utc": [
+      "12:00",
+      "17:00",
+      "20:00"
+    ],
+    "thread_numbering": "Use 1/ 2/ 3/ format — algorithm favors explicit thread structure"
+  },
+  "instagram": {
+    "reels": {
+      "optimal_length_seconds": 28,
+      "max_length_seconds": 90,
+      "hook_window_seconds": 2,
+      "caption_optimal": 150,
+      "caption_max": 2200,
+      "hashtags": "3-5 niche-specific only — trending hashtags are too competitive",
+      "algorithm_2026": "Completion rate is primary signal. Sound-on rate is secondary.",
+      "cover_image": "Always custom — native Instagram covers get 20-30% lower reach"
+    },
+    "stories": {
+      "optimal_sequence": 5,
+      "cta_placement": "Slide 4 or 5"
+    },
+    "carousel": {
+      "optimal_slides": 10,
+      "hook_rule": "Slide 1 must make them swipe — treat it like a LinkedIn hook"
+    }
+  },
+  "tiktok": {
+    "hook_window_seconds": 2,
+    "optimal_length_seconds": 30,
+    "algorithm_2026": "Completion rate is primary. Sound-on rate is secondary. Watch time per video over total watch time.",
+    "caption_chars": 150,
+    "hashtags": "3-5 niche only",
+    "posting_frequency": "Daily if possible — TikTok algorithm rewards volume more than any other platform"
+  },
+  "reddit": {
+    "automation_flag": "NEVER AUTO-POST — AMAE writes, founder posts manually. Reddit bans are permanent and IP-level.",
+    "aeo_value": "VERY HIGH — Reddit is confirmed in GPT-4, Claude, Gemini training data. A top post in your niche = permanent AEO presence.",
+    "post_strategy": "Value post with no self-promotion in first 3 paragraphs. Product can appear once, at the end, as a resource.",
+    "title_formula": "Specific result + situation they recognize. E.g. 'I automated my LinkedIn content and it actually sounds like me — here's exactly how'",
+    "comment_karma_rule": "Build 100+ comment karma in a subreddit before posting your own content there."
+  },
+  "quora": {
+    "automation_flag": "Human review recommended before posting",
+    "aeo_value": "HIGH — Quora answers rank in Google and appear in AI search results for question queries",
+    "answer_structure": "Direct answer first (2 sentences) → personal experience → specific data → optional product mention at end",
+    "format": "No marketing language. First-person. Experience-based. Specific."
+  },
+  "newsletter": {
+    "platform": "Beehiiv",
+    "automation_flag": "NEVER AUTO-SEND — AMAE drafts, founder reviews and sends",
+    "optimal_length_words": 600,
+    "structure": "1 insight + 1 resource + 1 action step + 1 question for readers",
+    "subject_line_formula": "[Specific number or outcome]: [what they get inside]",
+    "send_day": "Tuesday 10am recipient's timezone — highest confirmed open rates",
+    "send_frequency": "Weekly — consistency over volume"
+  },
+  "beehiiv": {
+    "api_endpoint": "https://api.beehiiv.com/v2",
+    "draft_status": "draft",
+    "note": "AMAE creates draft via API. Founder reviews in Beehiiv dashboard and clicks Send."
+  },
+  "facebook": {
+    "max_chars": 63206,
+    "optimal_chars": 80,
+    "hook_rules": [
+      "start with a question or bold statement",
+      "use line breaks every 2-3 sentences",
+      "native video outperforms links"
+    ],
+    "never": [
+      "political content",
+      "overly promotional language",
+      "link-only posts"
+    ],
+    "algorithm_2026": "Meaningful social interactions — comments weighted 5x over likes"
+  },
+  "youtube_shorts": {
+    "max_seconds": 60,
+    "hook_rule": "hook in first 3 seconds or viewer scrolls",
+    "format": "vertical 9:16",
+    "optimal_length_seconds": 45,
+    "never": [
+      "slow intros",
+      "black screens",
+      "talking without visual context"
+    ],
+    "algorithm_2026": "Completion rate primary, swipe-away rate secondary"
+  },
+  "youtube_long": {
+    "optimal_length_minutes": 10,
+    "hook_rule": "first 30 seconds must state the payoff clearly",
+    "chapters": true,
+    "never": [
+      "filler content",
+      "vague titles without keyword"
+    ],
+    "algorithm_2026": "Watch time + CTR both critical — 50% CTR + 40% watch time"
+  },
+  "pinterest": {
+    "max_chars": 500,
+    "image_ratio": "2:3 vertical",
+    "hook_rules": [
+      "keyword-rich descriptions for search",
+      "save-worthy content only"
+    ],
+    "never": [
+      "horizontal images",
+      "text-only pins"
+    ],
+    "algorithm_2026": "Save rate primary — content must be worth bookmarking"
+  },
+  "threads": {
+    "max_chars": 500,
+    "hook_rules": [
+      "conversational tone",
+      "end with a question for replies"
+    ],
+    "never": [
+      "hard selling",
+      "cross-posting identical LinkedIn content"
+    ],
+    "algorithm_2026": "Replies and reposts weighted equally — conversations beat broadcasts"
+  },
+  "podcast_pitch": {
+    "format": "cold pitch email under 150 words",
+    "hook_rules": [
+      "why their audience specifically",
+      "your credibility in one sentence",
+      "specific episode reference"
+    ],
+    "never": [
+      "generic pitches",
+      "pitching without listening to episodes"
+    ],
+    "algorithm_2026": "Personalisation is the only thing that works — mass pitches ignored"
+  },
+  "pr_release": {
+    "format": "inverted pyramid — most newsworthy first",
+    "max_words": 500,
+    "hook_rules": [
+      "dateline in header",
+      "quote from founder in second paragraph"
+    ],
+    "never": [
+      "jargon",
+      "superlatives without proof",
+      "passive voice"
+    ],
+    "algorithm_2026": "Journalists scan first paragraph only — lead with the news, not background"
+  },
+  "community": {
+    "format": "conversational, genuine contribution",
+    "hook_rules": [
+      "add value before any mention of product",
+      "reply to threads before posting"
+    ],
+    "never": [
+      "promotional language",
+      "link dropping without context",
+      "copy-paste same post multiple communities"
+    ],
+    "algorithm_2026": "Trust-based — community memory is long. Contribute 5x before promoting once."
+  }
+}
