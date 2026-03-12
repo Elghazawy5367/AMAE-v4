@@ -1,0 +1,103 @@
+{
+  "_version": "v1",
+  "brand_uid": "YOUR-BRAND-SLUG",
+  "_brand_uid_instructions": "Unique slug for your brand. Used by citation-tracker.js. Lowercase, hyphens only. e.g. my-product-name",
+  "_critical": "This is the only file you fill in. The quality of everything AMAE produces depends entirely on how honest and specific you are here. Marketing language produces marketing content. Real human language produces resonant content.",
+  "active_product": "product_1",
+  "products": {
+    "product_1": {
+      "name": "YOUR_PRODUCT_NAME",
+      "_name_note": "Your actual product name. Not a tagline.",
+      "tagline": "WHO it is for + WHAT they get + HOW FAST",
+      "_tagline_note": "Example: 'The tool that turns solo founder anxiety into a week of content in 15 minutes'",
+      "url": "https://yourproduct.com",
+      "category": "SaaS",
+      "_category_note": "SaaS | Info Product | Tool | Service | Template | Community",
+      "stage": "pre-launch",
+      "_stage_note": "pre-launch | launched | growing | scaling",
+      "pricing": {
+        "model": "freemium",
+        "_model_note": "free | one-time | subscription | freemium | usage-based",
+        "price": "$0 free / $29/mo paid",
+        "free_tier": true,
+        "trial_days": 14
+      },
+      "icp": {
+        "primary": "ROLE at COMPANY_TYPE who struggles with SPECIFIC_PROBLEM every TIMEFRAME",
+        "_primary_note": "Be brutal. Not 'small business owners'. Try: 'Solo B2B SaaS founders at $0-5k MRR who write all their own marketing copy after a full day of product work and get 3 likes per post'",
+        "secondary": "SECONDARY_SEGMENT",
+        "sophistication": "intermediate",
+        "_sophistication_note": "beginner | intermediate | advanced — affects vocabulary and depth of content",
+        "subreddits": [
+          "r/sideproject",
+          "r/indiehackers",
+          "r/SaaS"
+        ],
+        "_subreddits_note": "WHERE they go to complain, ask for help, and discuss problems. These get mined every Tuesday. Be specific — r/entrepreneur is too broad, r/SaaS is better.",
+        "vocabulary_they_use": [
+          "REAL_WORD_1",
+          "REAL_WORD_2",
+          "REAL_PHRASE_3"
+        ],
+        "_vocab_note": "The exact words they use when describing THEIR problem. Not yours. Listen to how they talk in those subreddits.",
+        "vocabulary_they_hate": [
+          "growth hacking",
+          "synergy",
+          "scalable solution"
+        ],
+        "_hate_note": "Marketing words that make them instantly distrust whoever says them."
+      },
+      "the_desire": {
+        "_CRITICAL_ZONE": "STOP. Answer these from lived knowledge of your real audience. Read through 50+ posts in their subreddits first. Do NOT let AI generate this section. This is where 80% of AMAE's intelligence actually lives.",
+        "what_they_secretly_want": "FILL_IN: Not the feature. The transformation. Not 'a marketing tool' — 'to feel like their product is finally getting the attention it deserves without becoming a full-time content creator'",
+        "what_they_fear_most": "FILL_IN: The 2am fear. Real and ugly. Not polished. Example: 'That they will run out of runway before anyone discovers they exist, while worse products with bigger marketing budgets win'",
+        "what_they_are_frustrated_by": "FILL_IN: Specific recurring friction. With numbers if possible. Example: 'Spending 4 hours on a LinkedIn post that gets 4 likes while a competitor with an inferior product posts 3 sentences and gets 200 comments'",
+        "who_they_want_to_become": "FILL_IN: Identity, not outcome. Not 'someone with more followers' — 'the kind of founder who runs a lean, profitable company with no marketing team and still outgrows funded competitors'"
+      },
+      "solution": {
+        "core_mechanism": "FILL_IN: HOW it solves the problem — the unique method, not the category name",
+        "unique_angle": "FILL_IN: The one thing you do that no competitor does exactly this way",
+        "proof_point": "FILL_IN: One specific measurable result. Saves X hours. Costs Y less. Does Z in N minutes.",
+        "what_you_are_not": "FILL_IN: What you refuse to be. Critical for positioning clarity."
+      },
+      "competitors": [
+        {
+          "name": "COMPETITOR_A_NAME",
+          "their_weakness": "FILL_IN: What their own users consistently complain about in reviews and forums",
+          "your_advantage": "FILL_IN: The specific thing you do better that their users wish they had",
+          "their_repo": "github.com/org/repo"
+        }
+      ]
+    }
+  },
+  "brand_voice": {
+    "tone": "direct",
+    "_tone_note": "direct | conversational | technical | casual | provocative",
+    "sounds_like": "FILL_IN: Example: 'A founder talking to another founder over coffee. Short sentences. No buzzwords. First person. Says the uncomfortable true thing.'",
+    "founder_story": "FILL_IN: One paragraph. Why you actually built this. Not the pitch version — the real reason.",
+    "contrarian_view": "FILL_IN: One thing you believe that most people in your industry are wrong about. This becomes the backbone of TOFU content.",
+    "phrases_that_sound_like_you": [
+      "PHRASE_1",
+      "PHRASE_2"
+    ],
+    "_phrases_note": "Real things you actually say. AMAE uses these to calibrate voice.",
+    "never_say": [
+      "game-changing",
+      "revolutionary",
+      "unlock",
+      "leverage",
+      "ecosystem",
+      "synergy",
+      "seamlessly",
+      "robust",
+      "empower",
+      "transformative",
+      "delve",
+      "dive into",
+      "it's worth noting",
+      "in conclusion",
+      "Furthermore"
+    ],
+    "_never_say_note": "AI-tell words and marketing buzzwords. AMAE's guardrail scans for these and rewrites."
+  }
+}
