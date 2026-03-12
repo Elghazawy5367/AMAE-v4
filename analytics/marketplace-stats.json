@@ -1,0 +1,30 @@
+{
+  "_description": "Marketplace performance tracking",
+  "_instructions": "Update manually after each marketplace activity.",
+  "last_updated": null,
+  "product_hunt": {
+    "launch_date": null,
+    "final_votes": 0,
+    "rank": null,
+    "comments": 0,
+    "traffic_spike": 0
+  },
+  "g2": {
+    "reviews": 0,
+    "avg_rating": 0,
+    "profile_views": 0
+  },
+  "capterra": {
+    "reviews": 0,
+    "avg_rating": 0
+  },
+  "appsumo": {
+    "deal_live": false,
+    "sales": 0,
+    "revenue": 0
+  },
+  "gumroad_lemon_squeezy": {
+    "sales": 0,
+    "revenue": 0
+  }
+}
