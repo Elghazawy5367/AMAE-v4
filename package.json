@@ -1,0 +1,26 @@
+{
+  "name": "amae",
+  "version": "1.0.0",
+  "description": "Autonomous Marketing Agentic Engine — mines audience pain language, generates campaigns, files PRs weekly",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "intelligence": "node agents/copy-excavator.js && node agents/timing-scout.js && node agents/competitor-autopsist.js && node agents/audience-locator.js && node agents/hook-miner.js && node agents/objection-mapper.js && node agents/intelligence-synthesizer.js",
+    "campaign": "node agents/memory-parser.js && node agents/memory-agent.js && node agents/intel-agent.js && node agents/strategy-agent.js && node agents/funnel-router.js && node agents/content-factory.js && node agents/guardrail-agent.js && node agents/content-mirror-agent.js",
+    "media": "node agents/image-generator.js && node agents/voice-generator.js && node agents/video-producer.js",
+    "distribute": "node agents/distributor.js",
+    "evolution": "node agents/scout-agent.js && node agents/twin-agent.js && node agents/evolution-agent.js",
+    "memory": "node agents/memory-parser.js && node agents/memory-agent.js",
+    "test:reddit": "node --input-type=module -e \"import { fetchSubreddit } from './lib/reddit-api.js'; fetchSubreddit('sideproject').then(r => console.log(JSON.stringify(r.slice(0,2), null, 2)));\"",
+    "test:openrouter": "node --input-type=module -e \"import { callModel, MODELS } from './lib/openrouter.js'; callModel([{role:'user',content:'reply with: working'}], MODELS.FAST, 50).then(console.log);\"",
+    "test:ideogram": "node --input-type=module -e \"import { generateImage } from './lib/ideogram-api.js'; generateImage('A simple test image', '1:1').then(r => console.log('Ideogram OK:', r?.url ?? 'no url'));\"",
+    "check": "node --check agents/*.js lib/*.js",
+    "dev": "node --env-file=.env agents/copy-excavator.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {}
+}
