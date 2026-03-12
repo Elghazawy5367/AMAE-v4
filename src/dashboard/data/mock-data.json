@@ -1,0 +1,20 @@
+{
+  "_note": "Development mock data for dashboard. Replace with real data in production.",
+  "campaign_status": {
+    "week": "2026-W10",
+    "state": "pending_review",
+    "platforms_generated": 15,
+    "guardrail_passed": 13,
+    "pr_url": "https://github.com/your-org/amae/pull/1"
+  },
+  "resonance_signals": {
+    "total": 0,
+    "this_week": 0,
+    "best_platform": null
+  },
+  "funnel_metrics": {
+    "tofu_percent": 50,
+    "mofu_percent": 30,
+    "bofu_percent": 20
+  }
+}
