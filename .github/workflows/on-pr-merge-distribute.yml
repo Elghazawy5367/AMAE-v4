@@ -1,0 +1,81 @@
+# ================================================================ 
+# AMAE — Auto-Distribution on PR Merge 
+# Triggered when a campaign PR is merged to main 
+# Phase 4: uncomment distribution steps when API keys are ready 
+# Reddit/Quora/Newsletter always remain manual — never auto-post 
+# ================================================================ 
+ 
+name: Distribute on Campaign PR Merge 
+ 
+on: 
+  pull_request: 
+    types: [closed] 
+    branches: [main] 
+ 
+permissions: 
+  contents: write 
+ 
+jobs: 
+  distribute: 
+    name: Post to Connected Platforms 
+    runs-on: ubuntu-latest 
+    timeout-minutes: 15 
+ 
+    # Only run when PR is actually merged AND it is a campaign PR 
+    if: | 
+      github.event.pull_request.merged == true && 
+      startsWith(github.event.pull_request.head.ref, 'campaign/') 
+ 
+    steps: 
+      - name: Checkout repository 
+        uses: actions/checkout@v4 
+        with: 
+          fetch-depth: 1 
+ 
+      - name: Set up Node.js 20 
+        uses: actions/setup-node@v4 
+        with: 
+          node-version: '20' 
+          cache: 'npm' 
+ 
+      - name: Install dependencies 
+        run: npm ci --prefer-offline 
+ 
+      # ── Phase 4 distribution steps — uncomment when API keys are added ────── 
+ 
+      # - name: Post to LinkedIn 
+      #   run: node agents/dist-linkedin.js 
+      #   env: 
+      #     LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }} 
+      #     LINKEDIN_PERSON_URN:   ${{ secrets.LINKEDIN_PERSON_URN }} 
+ 
+      # - name: Post Twitter/X thread 
+      #   run: node agents/dist-twitter-x.js 
+      #   env: 
+      #     TWITTER_API_KEY:       ${{ secrets.TWITTER_API_KEY }} 
+      #     TWITTER_API_SECRET:    ${{ secrets.TWITTER_API_SECRET }} 
+      #     TWITTER_ACCESS_TOKEN:  ${{ secrets.TWITTER_ACCESS_TOKEN }} 
+      #     TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }} 
+ 
+      # - name: Create Beehiiv newsletter draft (DO NOT auto-send — creates draft only) 
+      #   run: node agents/dist-beehiiv.js 
+      #   env: 
+      #     BEEHIIV_API_KEY:        ${{ secrets.BEEHIIV_API_KEY }} 
+      #     BEEHIIV_PUBLICATION_ID: ${{ secrets.BEEHIIV_PUBLICATION_ID }} 
+ 
+      - name: Log distribution event 
+        run: | 
+          mkdir -p analytics 
+          echo "{\"merged_at\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\", \"pr\": \"${{ 
+github.event.pull_request.title }}\", \"branch\": \"${{ github.event.pull_request.head.ref }}\"}" >> 
+analytics/distribution-log.jsonl 
+          echo "Distribution logged: ${{ github.event.pull_request.title }}" 
+ 
+      - name: Commit distribution log 
+        run: | 
+          git config user.name  "AMAE Distribution Bot" 
+          git config user.email "amae-bot@noreply.github.com" 
+          git add analytics/ 
+          git diff --cached --quiet && echo "Nothing to commit" || \ 
+            git commit -m "analytics: distribution log $(date +'%Y-%m-%d') [skip ci]" && \ 
+            git push origin main
