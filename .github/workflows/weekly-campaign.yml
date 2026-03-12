@@ -1,0 +1,145 @@
+# === FILE: .github/workflows/weekly-campaign.yml ===
+# GAP-002 FIX: Added complete workflow wrapper + peter-evans PR step (was stub of steps only)
+
+name: Weekly Campaign Engine — Thursday
+
+on:
+  schedule:
+    - cron: '0 6 * * 4'
+  workflow_dispatch:
+    inputs:
+      week_override:
+        description: 'Week to generate (e.g. 2026-W12). Blank = current week.'
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  campaign:
+    name: Generate Campaign
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ── CAMPAIGN ENGINE — all 13 agents in correct order ─────────────
+
+      - name: Step 1 — Memory Parser (parse resonance log → performance.json FIRST)
+        run: node agents/memory-parser.js
+
+      - name: Step 2 — Memory Agent (read performance.json, update insights)
+        run: node agents/memory-agent.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      - name: Step 3 — Intel Agent (reads synthesis-brief.md, verifies)
+        run: node agents/intel-agent.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      - name: Step 4 — Strategy Agent (4-persona deliberation)
+        run: node agents/strategy-agent.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          ANTHROPIC_API_KEY:  ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Step 5 — Funnel Router (tag all content TOFU/MOFU/BOFU)
+        run: node agents/funnel-router.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      - name: Step 6 — Content Factory (all 15 platforms, parallel)
+        run: node agents/content-factory.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GROQ_API_KEY:        ${{ secrets.GROQ_API_KEY }}
+
+      - name: Step 7 — Image Generator (Ideogram → PNG files)
+        run: node agents/image-generator.js
+        env:
+          IDEOGRAM_API_KEY: ${{ secrets.IDEOGRAM_API_KEY }}
+        continue-on-error: true
+
+      - name: Step 8 — Voice Generator (ElevenLabs → MP3 files)
+        run: node agents/voice-generator.js
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        continue-on-error: true
+
+      - name: Step 9 — Video Producer (HeyGen job submission)
+        run: node agents/video-producer.js
+        env:
+          HEYGEN_API_KEY:  ${{ secrets.HEYGEN_API_KEY }}
+          HEYGEN_VOICE_ID: ${{ secrets.HEYGEN_VOICE_ID }}
+          RUNWAY_API_KEY:  ${{ secrets.RUNWAY_API_KEY }}
+        continue-on-error: true
+
+      - name: Step 10 — Email Sequence Agent
+        run: node agents/email-sequence-agent.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      - name: Step 11 — Marketplace Agent (PH, G2, Capterra listings)
+        run: node agents/marketplace-agent.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      - name: Step 12 — Guardrail Agent (remove AI-tells, fix platform rules)
+        run: node agents/guardrail-agent.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      - name: Step 13 — Content Mirror (quality gate — auto-rewrite if score < 70)
+        run: node agents/content-mirror-agent.js
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GROQ_API_KEY:        ${{ secrets.GROQ_API_KEY }}
+
+      - name: Get current week
+        id: date
+        run: |
+          WEEK=$(node --input-type=module -e "import { getCurrentWeek } from './lib/week-utils.js'; process.stdout.write(getCurrentWeek())")
+          echo "week=$WEEK" >> $GITHUB_OUTPUT
+
+      - name: File campaign PR for human review
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "campaign: ${{ steps.date.outputs.week }} content generated [skip ci]"
+          branch: campaign/week-${{ github.run_id }}
+          title: "🎯 Campaign Review — ${{ steps.date.outputs.week }}"
+          body: |
+            ## Weekly Campaign — Human Review Required
+
+            All platform drafts are in `campaigns/${{ steps.date.outputs.week }}/text/`.
+
+            **Before merging:**
+            - [ ] Read every piece of content
+            - [ ] Check verbatim hooks sound human, not marketing
+            - [ ] Verify product voice matches brand
+            - [ ] Check `guardrail-log.md` for any rewrites
+            - [ ] Verify funnel mix: TOFU should be 40%+ of pieces
+
+            **Manual actions (do NOT auto-post):**
+            - Post `reddit-post.md` manually to subreddit
+            - Review `newsletter.md` in Beehiiv and send manually
+            - Post `quora-answer.md` from QUORA_MANUAL_POST.md
+
+            **Auto-posts on merge:** LinkedIn, Twitter/X, Threads, Facebook, Instagram, Pinterest, Blog
+          labels: amae-campaign
+          draft: false
