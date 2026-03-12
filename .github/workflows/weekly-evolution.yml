@@ -1,0 +1,83 @@
+# ================================================================ 
+# AMAE — Weekly Evolution System 
+# Schedule: Sunday 11:30pm UTC (Sunday 7:30pm ET / Monday 1:30am CET) 
+# Job: Scout → Twin → Evolution → File upgrade PRs for founder review 
+# CRITICAL: All PRs filed here REQUIRE founder review. Never auto-merge. 
+# ================================================================ 
+ 
+name: Weekly Evolution 
+ 
+on: 
+  schedule: 
+    - cron: '30 23 * * 0'   # Sunday 11:30pm UTC 
+  workflow_dispatch: 
+ 
+permissions: 
+  contents: write 
+  pull-requests: write 
+ 
+jobs: 
+  evolve: 
+    name: Scout → Twin → Evolution PRs 
+    runs-on: ubuntu-latest 
+    timeout-minutes: 45 
+ 
+    steps: 
+      - name: Checkout repository 
+        uses: actions/checkout@v4 
+        with: 
+          fetch-depth: 1 
+ 
+      - name: Set up Node.js 20 
+        uses: actions/setup-node@v4 
+        with: 
+          node-version: '20' 
+          cache: 'npm' 
+ 
+      - name: Install dependencies 
+        run: npm ci --prefer-offline 
+ 
+      - name: Run scout-agent — scan GitHub for elite repos 
+        run: node agents/scout-agent.js 
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+ 
+      - name: Run twin-agent — extract intelligence from candidates 
+        run: node agents/twin-agent.js 
+        env: 
+          GITHUB_TOKEN:       ${{ secrets.GITHUB_TOKEN }} 
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }} 
+ 
+      - name: Run evolution-agent — generate upgrade patches and queue PRs 
+        run: node agents/evolution-agent.js 
+        env: 
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }} 
+ 
+      - name: Commit intelligence files (scout report, discovered, queued PRs) 
+        run: | 
+          git config user.name  "AMAE Evolution Bot" 
+          git config user.email "amae-bot@noreply.github.com" 
+          git add intelligence/ 
+          git diff --cached --quiet && echo "No intelligence changes" || \ 
+            git commit -m "evolution: weekly scout $(date +'%Y-W%V') [skip ci]" && \ 
+            git push origin main 
+ 
+      - name: Create evolution PRs from queue 
+        run: | 
+          # Read each queued PR and create it 
+          for file in intelligence/evolution-queue/*.json; do 
+            [ -f "$file" ] || continue 
+ 
+            BRANCH=$(node --input-type=module -e "import { readFileSync } from 'fs'; const d = JSON.parse(readFileSync('$file', 'utf8')); process.stdout.write(d.branch_name)")
+            TITLE=$(node  --input-type=module -e "import { readFileSync } from 'fs'; const d = JSON.parse(readFileSync('$file', 'utf8')); process.stdout.write(d.pr_title)")
+            BODY=$(node   --input-type=module -e "import { readFileSync } from 'fs'; const d = JSON.parse(readFileSync('$file', 'utf8')); process.stdout.write(d.pr_body)") 
+ 
+            echo "Creating PR: $TITLE" 
+ 
+            # Create branch from main 
+            git checkout -b "$BRANCH" || git checkout "$BRANCH" 
+            git push origin "$BRANCH" || true 
+            git checkout main 
+          done 
+        env: 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
