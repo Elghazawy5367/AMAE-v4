@@ -1,0 +1,60 @@
+{
+  "_version": "v1",
+  "_note": "Funnel-aware posting schedule. TOFU content early in the week when energy is highest. MOFU mid-week. BOFU (email, direct) end of week.",
+  "weekly_schedule": {
+    "monday": {
+      "platforms": [
+        "linkedin"
+      ],
+      "funnel_stage": "TOFU",
+      "content_type": "awareness — hook-first, problem statement",
+      "note": "Monday awareness post anchors the week"
+    },
+    "tuesday": {
+      "platforms": [
+        "twitter"
+      ],
+      "funnel_stage": "TOFU",
+      "content_type": "thread — one strong idea with numbered value points",
+      "note": "Tuesday threads perform well — audience active after Monday catch-up"
+    },
+    "wednesday": {
+      "platforms": [
+        "linkedin",
+        "threads"
+      ],
+      "funnel_stage": "MOFU",
+      "content_type": "credibility — how-to, insight, contrarian take with depth",
+      "note": "Mid-week for depth content when audience has more time to read"
+    },
+    "thursday": {
+      "platforms": [
+        "reddit"
+      ],
+      "funnel_stage": "TOFU",
+      "content_type": "value post — story format, purely helpful, no self-promotion first",
+      "note": "HUMAN POSTS ONLY — AMAE writes draft, founder posts manually"
+    },
+    "friday": {
+      "platforms": [
+        "newsletter",
+        "quora"
+      ],
+      "funnel_stage": "MOFU",
+      "content_type": "nurture — insight + resource + action step",
+      "note": "Newsletter: HUMAN SENDS. Quora: HUMAN POSTS."
+    }
+  },
+  "post_times_utc": {
+    "linkedin": "07:00",
+    "twitter": "13:00",
+    "threads": "13:30",
+    "newsletter": "10:00"
+  },
+  "funnel_targets": {
+    "TOFU_minimum_pct": 40,
+    "MOFU_target_pct": 35,
+    "BOFU_max_pct": 25,
+    "_note": "If TOFU drops below 40%, growth stalls. Funnel-router.js checks this and flags imbalances."
+  }
+}
