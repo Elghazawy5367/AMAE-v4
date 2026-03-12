@@ -1,0 +1,81 @@
+name: "📊 Performance Update — Log Resonance Signals" 
+description: "Log this week's real resonance signals so AMAE learns what's working." 
+title: "Performance: Week [YYYY-WXX]" 
+labels: ["performance", "memory-update"] 
+ 
+body: 
+  - type: markdown 
+    attributes: 
+      value: | 
+        ## Log This Week's Real Results 
+        These signals update AMAE's memory. Better memory = better campaigns next week. 
+        **Resonance signals that matter:** Comments saying "this is exactly my situation", DMs 
+asking for access, unprompted shares, replies with someone's own version of the frustration. 
+        **Signals that don't matter:** Likes, impressions, follower count, generic "great post!" 
+comments. 
+ 
+  - type: input 
+    id: week 
+    attributes: 
+      label: Week (ISO format) 
+      placeholder: "2026-W14" 
+    validations: 
+      required: true 
+ 
+  - type: dropdown 
+    id: overall_resonance 
+    attributes: 
+      label: Overall Resonance This Week 
+      options: 
+        - "Strong — multiple real signals (comments, DMs, shares)" 
+        - "Moderate — 1-2 real signals" 
+        - "Weak — likes only, no real engagement" 
+        - "None — silence" 
+    validations: 
+      required: true 
+ 
+  - type: textarea 
+    id: resonance_signals 
+    attributes: 
+      label: Specific Resonance Signals 
+      description: | 
+        Copy the actual comment/DM/share that felt real. Be specific. 
+        AMAE reads these to understand what language and angles are working. 
+      placeholder: | 
+        LinkedIn: "I've been doing this manually for 2 years, this is exactly what I need" 
+        Twitter: Thread got 4 replies sharing people's own horror stories 
+        Reddit: Post got 23 upvotes and 3 comments saying "bookmarked" 
+ 
+  - type: dropdown 
+    id: best_platform 
+    attributes: 
+      label: Which Platform Had the Best Resonance? 
+      options: 
+        - LinkedIn 
+        - Twitter/X 
+        - Reddit 
+        - Newsletter 
+        - TikTok/Instagram 
+        - YouTube 
+        - Quora 
+        - None — equal across platforms 
+ 
+  - type: textarea 
+    id: best_hook 
+    attributes: 
+      label: Which Hook/Opening Line Performed Best? 
+      description: Paste the exact opening line that got the best response. 
+      placeholder: "The specific first sentence that made people stop and read..." 
+ 
+  - type: textarea 
+    id: what_flopped 
+    attributes: 
+      label: What Flopped? 
+      description: Which platform or piece got no response? Be honest — this is valuable data. 
+      placeholder: "LinkedIn post got 3 likes and no comments. The hook was too generic." 
+ 
+  - type: textarea 
+    id: notes 
+    attributes: 
+      label: Additional Notes 
+      placeholder: "Anything else AMAE should remember about this week's performance..."
