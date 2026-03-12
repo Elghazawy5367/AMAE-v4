@@ -1,0 +1,60 @@
+{
+  "_description": "Elite content benchmarks for Content Mirror quality scoring",
+  "_instructions": "These are the standards every piece of content is measured against. Update as you discover what 'great' looks like for your audience.",
+  "hook_benchmarks": {
+    "linkedin_top_performing": [
+      "PLACEHOLDER — Paste a LinkedIn hook that performed exceptionally well for you or a creator you admire"
+    ],
+    "twitter_thread_openers": [
+      "PLACEHOLDER — Paste a Twitter thread opener that drove massive engagement"
+    ],
+    "tiktok_hooks": [
+      "PLACEHOLDER — Paste a TikTok opening line that drove high completion rate"
+    ]
+  },
+  "voice_anti_patterns": [
+    "dive into",
+    "delve into",
+    "in conclusion",
+    "it's worth noting",
+    "it's important to note",
+    "game-changing",
+    "revolutionary",
+    "leveraging",
+    "utilize",
+    "Furthermore",
+    "In today's fast-paced world",
+    "seamless integration",
+    "cutting-edge",
+    "innovative solution"
+  ],
+  "quality_thresholds": {
+    "minimum_weighted_score": 70,
+    "auto_rewrite_below": 70,
+    "human_review_if_still_below_after_rewrite": 70,
+    "max_rewrite_passes": 2
+  },
+  "platform_specific_standards": {
+    "linkedin": {
+      "optimal_char_count": "900-1200",
+      "hook_type": "declarative statement or specific number",
+      "no_links": true,
+      "hashtag_max": 3
+    },
+    "twitter_x": {
+      "thread_length": "7-9 tweets",
+      "hook_char_max": 200,
+      "link_placement": "last tweet only"
+    },
+    "tiktok": {
+      "hook_window_seconds": 2,
+      "optimal_duration": "15-30 seconds",
+      "completion_rate_target": "70%+"
+    },
+    "newsletter": {
+      "optimal_word_count": 600,
+      "structure": "1 insight + 1 resource + 1 action + 1 question",
+      "subject_line_chars": "40-60"
+    }
+  }
+}
