@@ -1,0 +1,52 @@
+{
+  "reddit": {
+    "subreddits": [
+      "sideproject",
+      "indiehackers",
+      "SaaS",
+      "startups",
+      "entrepreneur"
+    ],
+    "sorts": [
+      "hot",
+      "rising",
+      "top"
+    ],
+    "post_limit": 50,
+    "min_post_score": 10
+  },
+  "hackernews": {
+    "min_points": 50,
+    "search_tags": [
+      "show_hn",
+      "ask_hn"
+    ]
+  },
+  "github": {
+    "trending_language": "javascript",
+    "trending_since": "weekly"
+  },
+  "scoring": {
+    "buying_intent_threshold": 6,
+    "urgency_threshold": 40,
+    "quote_score_threshold": 7
+  },
+  "competitor_repos": [],
+  "seo_keywords": [],
+  "pain_signal_keywords": [
+    "looking for",
+    "willing to pay",
+    "frustrated that",
+    "takes forever",
+    "hours every week",
+    "automate",
+    "why cant i"
+  ],
+  "buying_signal_keywords": [
+    "need a tool",
+    "what do you use",
+    "recommend something",
+    "switched to",
+    "hire someone"
+  ]
+}
