@@ -1,0 +1,87 @@
+# ================================================================ 
+# AMAE — Full Product Launch Protocol 
+# Triggered by GitHub Release event OR Issue labeled 'launch' 
+# Generates the complete pre-launch, launch-day, and follow-through sequence 
+# ================================================================ 
+ 
+name: Launch Protocol 
+ 
+on: 
+  release: 
+    types: [created] 
+  issues: 
+    types: [labeled] 
+ 
+permissions: 
+  contents: write 
+  pull-requests: write 
+ 
+jobs: 
+  launch: 
+    name: Generate Full Launch Sequence 
+    runs-on: ubuntu-latest 
+    timeout-minutes: 60 
+ 
+    if: | 
+      github.event_name == 'release' || 
+      (github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'launch')) 
+ 
+    steps: 
+      - name: Checkout repository 
+        uses: actions/checkout@v4 
+ 
+      - name: Set up Node.js 20 
+        uses: actions/setup-node@v4 
+        with: 
+          node-version: '20' 
+          cache: 'npm' 
+ 
+      - name: Install dependencies 
+        run: npm ci --prefer-offline 
+ 
+      - name: Run Launch Protocol Agent 
+        run: node agents/launch-protocol-agent.js 
+        env: 
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }} 
+          GITHUB_TOKEN:       ${{ secrets.GITHUB_TOKEN }} 
+          RELEASE_NAME:       ${{ github.event.release.name || 'Launch' }} 
+          RELEASE_BODY:       ${{ github.event.release.body || '' }} 
+ 
+      - name: Get launch date 
+        id: meta 
+        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT 
+ 
+      - name: Create Launch PR 
+        uses: peter-evans/create-pull-request@v6 
+        with: 
+          token: ${{ secrets.GITHUB_TOKEN }} 
+          branch: launch/${{ steps.meta.outputs.DATE }} 
+          base: main 
+          commit-message: "launch: full launch sequence ${{ steps.meta.outputs.DATE }}" 
+          title: "🚀 Launch Sequence Ready — ${{ steps.meta.outputs.DATE }} — Review ALL 
+Before Merging" 
+          body: | 
+            ## Full Launch Sequence 
+ 
+            **This PR contains time-sensitive launch content. Review in order.** 
+ 
+            ### Pre-launch (T-72h) — Post BEFORE launch day 
+            - [ ] `campaigns/launch/text/teaser-posts.md` 
+            - [ ] `campaigns/launch/text/early-access-email.md` 
+ 
+            ### Launch day (T-0) — Post in chronological order 
+            - [ ] `campaigns/launch/text/producthunt-listing.md` — submit at 12:01am PT 
+            - [ ] `campaigns/launch/text/linkedin-launch.md` — post 8am ET 
+            - [ ] `campaigns/launch/text/twitter-x-launch-thread.md` — post 9am ET 
+            - [ ] `campaigns/launch/text/show-hn-post.md` — post 10am ET 
+            - [ ] `campaigns/launch/text/reddit-launch.md` — post 12pm ET (HUMAN POSTS 
+MANUALLY) 
+            - [ ] `campaigns/launch/text/tiktok-launch-script.md` — record and post 2pm ET 
+            - [ ] `campaigns/launch/text/newsletter-launch.md` — HUMAN SENDS 8pm ET 
+ 
+            ### Follow-through (T+1 to T+7) 
+            - [ ] `campaigns/launch/text/launch-retrospective.md` 
+            - [ ] `campaigns/launch/text/build-in-public-day1.md` 
+ 
+            **Reddit and Quora: always human posts. Newsletter: always human sends.** 
+          labels: launch
