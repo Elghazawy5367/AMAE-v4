@@ -1,0 +1,81 @@
+{
+  "_version": "v1",
+  "_instructions": "Funnel stage configuration. Defines content targets per stage and per platform.",
+  "targets": {
+    "TOFU": {
+      "_description": "Top of funnel — awareness. They don't know you yet.",
+      "minimum_percentage": 40,
+      "platforms": [
+        "tiktok",
+        "instagram_reels",
+        "youtube_shorts",
+        "twitter_x",
+        "reddit"
+      ],
+      "content_types": [
+        "hook_first",
+        "problem_awareness",
+        "trending_angle",
+        "story"
+      ],
+      "primary_metric": "impressions + new_followers + profile_visits",
+      "psychological_levers": [
+        "Loss Aversion",
+        "FOMO",
+        "Identity"
+      ]
+    },
+    "MOFU": {
+      "_description": "Middle of funnel — consideration. They know you, building trust.",
+      "target_percentage": 35,
+      "platforms": [
+        "linkedin",
+        "youtube_long",
+        "blog_aeo",
+        "newsletter",
+        "quora"
+      ],
+      "content_types": [
+        "how_to",
+        "case_study",
+        "comparison",
+        "deep_dive",
+        "proof_point"
+      ],
+      "primary_metric": "email_signups + time_on_page + newsletter_opens",
+      "psychological_levers": [
+        "Authority",
+        "Social Proof",
+        "Reciprocity"
+      ]
+    },
+    "BOFU": {
+      "_description": "Bottom of funnel — decision. They're ready to act.",
+      "maximum_percentage": 25,
+      "platforms": [
+        "email_sequences",
+        "marketplace",
+        "comparison_content"
+      ],
+      "content_types": [
+        "testimonials",
+        "objection_preemption",
+        "comparison_chart",
+        "offer"
+      ],
+      "primary_metric": "trials_started + purchases + demos_booked",
+      "psychological_levers": [
+        "Scarcity",
+        "FOMO",
+        "Commitment",
+        "Social Proof"
+      ]
+    }
+  },
+  "rebalance_rules": {
+    "TOFU_deficit": "If TOFU < 35%, prioritize trending angle content this week",
+    "BOFU_heavy": "If BOFU > 30%, reduce direct CTAs — audience needs more warmup",
+    "MOFU_deficit": "If MOFU < 25%, add one how-to or case study piece"
+  },
+  "new_product_default": "For products under 3 months old: 60% TOFU, 30% MOFU, 10% BOFU"
+}
