@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AMAE Dashboard — AMAE</title>
+<meta name="description" content="AMAE live dashboard — AMAE — 2026-W11">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07070d;--surface:#0d0d16;--card:#111120;--border:#1a1a2e;
+  --amber:#f59e0b;--green:#10b981;--red:#ef4444;--blue:#3b82f6;
+  --purple:#8b5cf6;--teal:#14b8a6;--pink:#ec4899;--orange:#f97316;
+  --text:#e2e8f0;--muted:#94a3b8;--dim:#4a5568;--faint:#181830;
+}
+body{font-family:'IBM Plex Mono','Courier New',monospace;background:var(--bg);color:var(--text);font-size:12px;min-height:100vh}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:#2d2d4a;border-radius:2px}
+a{color:var(--amber)}
+a:hover{text-decoration:underline}
+code{background:var(--faint);padding:1px 5px;border-radius:2px;font-family:inherit;font-size:10px;color:var(--amber)}
+
+/* header */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 22px 0}
+.hdr-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:5px}
+.brand{font-size:14px;font-weight:700;color:var(--amber);letter-spacing:.2em}
+.brand-sub{font-size:7px;letter-spacing:.14em;color:var(--dim);margin-top:1px}
+.tabs{display:flex;overflow-x:auto;scrollbar-width:none;gap:0}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:inherit;font-size:9px;letter-spacing:.09em;text-transform:uppercase;padding:8px 11px;color:var(--dim);white-space:nowrap}
+.tab.on{color:var(--amber);border-bottom-color:var(--amber)}
+.tab:hover:not(.on){color:var(--muted)}
+.tab-badge{background:var(--amber);color:var(--bg);border-radius:8px;padding:0 4px;font-size:7px;font-weight:700;margin-left:3px}
+
+/* pages */
+.page{display:none;padding:16px 22px;max-width:1400px}
+.page.on{display:block}
+
+/* grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.fc{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:4px}
+.p{padding:14px 18px}
+.psm{padding:10px 12px}
+.lbl{font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--dim)}
+.stat{font-size:26px;font-weight:700;line-height:1;margin-bottom:5px}
+.stat32{font-size:32px;font-weight:700;line-height:1}
+
+/* atoms */
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.chip{font-size:8px;padding:2px 6px;border-radius:2px;white-space:nowrap;letter-spacing:.05em}
+.chip-sm{font-size:7px;padding:1px 4px}
+.bar-w{height:3px;background:var(--faint);border-radius:2px;overflow:hidden}
+.bar-h4{height:4px}
+.bar-f{height:100%;transition:width .4s;border-radius:2px}
+.div{height:1px;background:var(--faint);margin:10px 0}
+
+/* alerts */
+.alrt{padding:10px 14px;border-radius:3px;border-left:3px solid var(--amber);background:#f59e0b11}
+.alrt-red{border-color:var(--red);background:#ef444411}
+.alrt-green{border-color:var(--green);background:#10b98111}
+.alrt-purple{border-color:var(--purple);background:#8b5cf611}
+
+/* table */
+.th{font-size:8px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--faint);padding-bottom:6px;margin-bottom:4px;display:grid;align-items:center}
+.tr{padding:7px 0;border-bottom:1px solid var(--faint);display:grid;align-items:center}
+.tr:hover{background:#0f0f1c}
+
+/* pipeline */
+.pipe{display:flex;align-items:center;overflow-x:auto;padding-bottom:4px}
+.pn{text-align:center;min-width:66px;flex-shrink:0}
+.pc{width:20px;height:20px;border-radius:50%;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700}
+.pl{flex:1;height:1px;margin:0 1px;margin-bottom:18px}
+
+/* quote */
+.quote{padding:10px 14px;border-left:3px solid var(--amber);background:var(--faint);border-radius:0 3px 3px 0;font-style:italic;color:var(--amber)}
+
+/* left-border box */
+.lbx{padding:8px 12px;border-radius:3px;border-left:2px solid}
+
+/* bg-faint box */
+.fbx{padding:8px 10px;background:var(--faint);border-radius:3px}
+.bbx{padding:9px 12px;background:var(--bg);border-radius:3px;border:1px solid var(--border)}
+
+/* toggles */
+.tgl{background:none;border:1px solid var(--dim);border-radius:2px;cursor:pointer;font-family:inherit;font-size:9px;letter-spacing:.05em;padding:3px 8px;color:var(--dim)}
+.tgl.on{border-color:var(--amber);color:var(--amber)}
+
+/* selects / inputs */
+select,input,textarea{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:11px;border-radius:3px;padding:5px 9px;outline:none;width:100%}
+select:focus,input:focus,textarea:focus{border-color:var(--amber)}
+
+.btn{background:none;border:1px solid var(--amber);border-radius:3px;cursor:pointer;font-family:inherit;font-size:9px;letter-spacing:.05em;padding:4px 10px;color:var(--amber);text-decoration:none;display:inline-block}
+.btn-sm{padding:2px 7px;font-size:8px}
+.btn-dim{border-color:var(--dim);color:var(--dim)}
+.btn-green{border-color:var(--green);color:var(--green)}
+.btn-purple{border-color:var(--purple);color:var(--purple)}
+
+.footer{padding:14px 22px;font-size:8px;color:var(--dim);border-top:1px solid var(--border);margin-top:20px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.pulse{animation:pulse 2s infinite}
+.blink{animation:blink 1s step-end infinite}
+@media(max-width:680px){.g2,.g3,.g4,.g5{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-row">
+    <div><div class="brand">AMAE</div><div class="brand-sub">AUTONOMOUS MARKETING ENGINE — v1</div></div>
+    <div class="row" id="h-status"></div>
+    <div class="row" id="h-stats" style="gap:18px"></div>
+  </div>
+  <div class="tabs" id="tabs"></div>
+</div>
+<div id="pages">
+  <div class="page on" id="pg-overview"></div>
+  <div class="page" id="pg-intelligence"></div>
+  <div class="page" id="pg-strategy"></div>
+  <div class="page" id="pg-campaigns"></div>
+  <div class="page" id="pg-content"></div>
+  <div class="page" id="pg-media"></div>
+  <div class="page" id="pg-distribution"></div>
+  <div class="page" id="pg-evolution"></div>
+  <div class="page" id="pg-github"></div>
+  <div class="page" id="pg-marketplace"></div>
+  <div class="page" id="pg-memory"></div>
+  <div class="page" id="pg-resonance"></div>
+  <div class="page" id="pg-config"></div>
+  <div class="page" id="pg-devtools"></div>
+  <div class="page" id="pg-cost"></div>
+</div>
+<div class="footer" id="footer"></div>
+
+<script>
+
+const $id = id => document.getElementById(id);
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fmtD = iso => iso ? new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}) : '—';
+const ago  = iso => { if(!iso) return 'never'; const h=Math.floor((Date.now()-new Date(iso))/3600000); return h<1?'just now':h<24?h+'h ago':Math.floor(h/24)+'d ago'; };
+const C = { amber:'#f59e0b',green:'#10b981',red:'#ef4444',blue:'#3b82f6',purple:'#8b5cf6',teal:'#14b8a6',dim:'#4a5568',muted:'#94a3b8',orange:'#f97316' };
+const dot  = (c,p=false) => '<span class="dot'+(p?' pulse':'')+'" style="background:'+c+'"></span>';
+const chip = (t,c='#4a5568',sm=false) => '<span class="chip'+(sm?' chip-sm':'')+'" style="background:'+c+'22;color:'+c+'">'+esc(t)+'</span>';
+const bar  = (p,c='#f59e0b',h4=false) => '<div class="bar-w'+(h4?' bar-h4':'')+'"><div class="bar-f" style="width:'+Math.min(Math.max(p||0,0),100)+'%;background:'+c+'"></div></div>';
+const lbl  = (t,mb=5) => '<div class="lbl" style="margin-bottom:'+mb+'px">'+esc(t)+'</div>';
+const card = (inner,hl='',st='') => '<div class="card"'+(hl?' style="border-color:'+hl+'44"':'')+( st?' style="'+st+'"':'' )+'>'+inner+'</div>';
+const alrt = (inner,t='amber') => '<div class="alrt'+(t!=='amber'?' alrt-'+t:'')+'">'+inner+'</div>';
+const bbx  = inner => '<div class="bbx">'+inner+'</div>';
+const lbx  = (inner,c) => '<div class="lbx" style="border-color:'+c+'">'+inner+'</div>';
+const div  = () => '<div class="div"></div>';
+const sect = (t,inner) => card('<div class="p"><div class="lbl" style="margin-bottom:12px">'+esc(t)+'</div>'+inner+'</div>');
+
+/* tabs */
+function initTabs(){
+  const bar = $id('tabs');
+  TABS.forEach(t=>{
+    const b = document.createElement('button');
+    b.className='tab'+(t.id==='overview'?' on':'');
+    b.dataset.pid=t.id;
+    const badge = t.id==='campaigns'?pendingCount:t.id==='evolution'?evoCount:0;
+    b.innerHTML = esc(t.label)+(badge?'<span class="tab-badge">'+badge+'</span>':'');
+    b.onclick=()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+      document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      $id('pg-'+t.id).classList.add('on');
+    };
+    bar.appendChild(b);
+  });
+}
+
+function renderHeader(){
+  const signals = LIVE.perf?.resonance_signals_total||0;
+  const dnaPct  = LIVE.product.dna.pct;
+  $id('h-status').innerHTML =
+    dot(C.green,true)+' <span style="font-size:9px;color:#10b981;letter-spacing:.08em">ACTIVE</span>'+
+    (dnaPct<100?' &nbsp; '+dot(C.red)+' <span style="font-size:9px;color:#ef4444" class="blink">&nbsp;DNA INCOMPLETE</span>':'')+
+    (pendingCount?' &nbsp; '+dot(C.amber)+' <span style="font-size:9px;color:#f59e0b">&nbsp;'+pendingCount+' PR'+(pendingCount>1?'s':'')+' PENDING</span>':'');
+  $id('h-stats').innerHTML = [
+    {l:'Week',v:LIVE.meta.week},{l:'Product',v:esc(LIVE.product.name).substring(0,12)},
+    {l:'Signals',v:signals},{l:'DNA',v:dnaPct+'%'},{l:'Week',v:'W'+weekNum()},
+  ].map(s=>'<div style="text-align:right"><div class="lbl" style="margin-bottom:2px">'+s.l+'</div><div style="font-size:13px;font-weight:600;color:#f59e0b;line-height:1">'+s.v+'</div></div>').join('');
+  $id('footer').innerHTML = 'Generated '+fmtD(LIVE.meta.generatedAt)+' by AMAE dashboard-builder.js &nbsp;·&nbsp; '+esc(LIVE.meta.week)+' &nbsp;·&nbsp; '+esc(LIVE.product.name)+' &nbsp;·&nbsp; <a href="https://github.com/Elghazawy5367/AMAE" target="_blank" rel="noopener">GitHub ↗</a>';
+}
+
+function weekNum(){ return LIVE.meta.week.replace(/.*-W/,''); }
+
+
+function renderOverview(){
+  const p   = LIVE.perf;
+  const ins = LIVE.insights;
+  const dna = LIVE.product.dna;
+  const signals = p?.resonance_signals_total||0;
+  const weeks   = p?.weeks_tracked||0;
+  const weeksWO = p?.weeks_without_resonance||0;
+
+  const pipeline = [
+    {s:'Copy Excavator',t:'Tue 04:00',c:'done'},{s:'Timing Scout',t:'Tue 04:08',c:'done'},
+    {s:'Competitor Intel',t:'Tue 04:15',c:'done'},{s:'Synthesis',t:'Tue 04:30',c:'done'},
+    {s:'Memory Parse',t:'Thu 06:00',c:'done'},{s:'4-Persona Strategy',t:'Thu 06:05',c:'done'},
+    {s:'Content Factory',t:'Thu 06:12',c:'done'},{s:'Media Gen',t:'Thu 06:25',c:'done'},
+    {s:'Guardrail',t:'Thu 06:38',c:'done'},{s:'PR Filed',t:'Thu 06:50',c:'done'},
+    {s:'Founder Review',t:'You (Fri)',c:'pending'},{s:'Auto-Publish',t:'On merge',c:'waiting'},
+  ];
+  const pipeHtml = pipeline.map((item,i,arr)=>{
+    const cl = item.c==='done'?C.green:item.c==='pending'?C.amber:C.dim;
+    const ic = item.c==='done'?'✓':item.c==='pending'?'!':'·';
+    return '<div class="pn"><div class="pc" style="background:'+cl+'22;border:1px solid '+cl+';color:'+cl+'">'+ic+'</div>'
+      +'<div style="font-size:7.5px;font-weight:600;color:'+cl+';line-height:1.3">'+esc(item.s)+'</div>'
+      +'<div style="font-size:6.5px;color:#4a5568;margin-top:1px">'+esc(item.t)+'</div></div>'
+      +(i<arr.length-1?'<div class="pl" style="background:'+cl+'33"></div>':'');
+  }).join('');
+
+  const metCards = [
+    {l:'Resonance Signals',v:signals,c:signals>=3?C.green:C.amber,note:'Real audience signals logged'},
+    {l:'Weeks Running',    v:weeks,  c:C.amber, note:'Weeks with at least one campaign'},
+    {l:'Weeks No Signal',  v:weeksWO,c:weeksWO>=4?C.red:C.dim, note:weeksWO>=6?'⚠ Review the_desire section':'On track'},
+    {l:'Product Stage',    v:esc(LIVE.product.stage),c:C.blue, note:'Set in product-dna.json'},
+  ].map(m=>card('<div class="psm">'+lbl(m.l)+'<div class="stat" style="color:'+m.c+'">'+m.v+'</div><div style="font-size:8px;color:#4a5568">'+m.note+'</div></div>','')).join('');
+
+  const dnaCard = card('<div class="psm">'+lbl('Product DNA')
+    +'<div class="stat" style="color:'+(dna.pct<100?C.amber:C.green)+'">'+dna.pct+'%</div>'
+    +bar(dna.pct,dna.pct<100?C.amber:C.green,true)
+    +'<div style="margin-top:8px">'
+    +dna.missing.map(f=>'<div class="row" style="gap:5px;margin-bottom:4px">'+dot(C.red)+'<span style="font-size:9px;color:#ef4444">'+esc(f)+'</span></div>').join('')
+    +'</div></div>', dna.pct<100?C.red:C.green);
+
+  const recCard = card('<div class="p">'+lbl('AMAE Recommendation')
+    +'<div class="quote" style="margin-top:8px;font-size:11px;line-height:1.7">'+esc(ins?.recommendation||'No data yet — run first campaign.')+'</div>'
+    +(ins?.alert?'<div style="margin-top:8px;padding:6px;background:#ef444411;border-radius:2px;font-size:8px;color:#ef4444">'+esc(ins.alert)+'</div>':'')
+    +'</div>','');
+
+  const wfHtml = REPO.workflows.map(w=>{
+    const c = C.dim;
+    return card('<div class="psm"><div class="row" style="gap:5px;margin-bottom:4px">'+dot(c)+'<span style="font-size:9px;font-weight:600;color:#94a3b8">'+esc(w.label)+'</span></div>'
+      +'<div style="font-size:8px;color:#4a5568">'+esc(w.day)+'</div>'
+      +'<div style="font-size:7px;color:#4a5568;margin-top:2px;line-height:1.3">'+esc(w.desc)+'</div></div>');
+  }).join('');
+
+  const working = ins?.what_is_working?.length
+    ? card('<div class="p">'+lbl('What Is Working',10)
+        +ins.what_is_working.map(w=>'<div class="row" style="gap:6px;margin-bottom:5px">'+dot(C.green)+'<span style="font-size:10px;color:#94a3b8">'+esc(w)+'</span></div>').join('')
+        +'</div>',C.green) : '';
+  const notWorking = ins?.what_is_not_working?.length
+    ? card('<div class="p">'+lbl('What Is Not Working',10)
+        +ins.what_is_not_working.map(w=>'<div class="row" style="gap:6px;margin-bottom:5px">'+dot(C.red)+'<span style="font-size:10px;color:#94a3b8">'+esc(w)+'</span></div>').join('')
+        +'</div>','') : '';
+
+  const phases = [
+    {n:'Phase 1 — Skeleton',done:true},
+    {n:'Phase 2 — Campaign Engine',done:true},
+    {n:'Phase 3 — Intelligence',done:true},
+    {n:'Phase 4 — Distribution',done:false,active:true},
+    {n:'Phase 5 — Secret Sauce',done:false,locked:true},
+    {n:'Phase 6 — Product',done:false,locked:true},
+  ].map(p=>'<div class="row" style="gap:7px;margin-bottom:7px"><span style="color:'+(p.done?C.green:p.active?C.amber:C.dim)+';font-size:10px;width:12px">'+(p.done?'✓':p.active?'▶':'○')+'</span><span style="font-size:9px;color:'+(p.done?C.muted:p.active?C.amber:C.dim)+'">'+esc(p.n)+(p.locked?' 🔒':'')+'</span></div>').join('');
+
+  const warn6 = (ins?.alert==='6_week_warning'||weeksWO>=6) ? alrt('<div style="font-size:10px;font-weight:600;color:#f59e0b;margin-bottom:4px">⚠ 6-Week Warning</div><div style="font-size:9px;color:#94a3b8">No resonance signals for 6 weeks. Re-run Desire Discovery Protocol. Revisit the_desire section in product-dna.json.</div>') : '';
+
+  const log = LIVE.resonanceLog
+    ? card('<div class="p">'+lbl('analytics/resonance-log.md')
+        +'<pre style="font-size:9px;color:#4a5568;white-space:pre-wrap;max-height:80px;overflow:hidden;margin-top:6px">'
+        +esc(LIVE.resonanceLog.split('\n').filter(Boolean).slice(-6).join('\n'))
+        +'</pre><div style="font-size:8px;color:#4a5568;margin-top:4px">Update this file after each real audience signal.</div></div>') : '';
+
+  $id('pg-overview').innerHTML = '<div class="fc">'
+    +warn6
+    +card('<div class="p">'+lbl('Weekly Automation Pipeline — '+LIVE.meta.week,'12')+'<div class="pipe">'+pipeHtml+'</div></div>')
+    +'<div class="g4">'+metCards+'</div>'
+    +'<div class="g3">'+dnaCard+recCard+card('<div class="p">'+lbl('Build Progress')+phases+'</div>')+'</div>'
+    +(working||notWorking?'<div class="g2">'+working+notWorking+'</div>':'')
+    +(log||'')
+    +'<div class="g4">'+wfHtml+'</div>'
+    +'</div>';
+}
+
+
+function renderIntelligence(){
+  const brief = LIVE.synthBrief;
+  const hooks = LIVE.hookPerf?.top_hooks||LIVE.hookPerf?.best_performing||[];
+
+  const briefCard = brief
+    ? card('<div class="p">'+lbl('Synthesis Brief — intelligence/weekly/ — current week')
+        +'<div class="quote" style="margin:8px 0;font-size:10px;line-height:1.7">'+esc(brief.split('\n').slice(0,10).join(' ').substring(0,700))+'</div>'
+        +'<div style="font-size:8px;color:#4a5568">Written by intelligence-synthesizer.js every Tuesday</div></div>',C.amber)
+    : card('<div class="psm">'+lbl('Synthesis Brief')+'<div style="color:#4a5568;font-size:10px;margin-top:6px">No brief yet — appears after first Tuesday 04:00 UTC intelligence run.</div></div>','');
+
+  const agentGrid = '<div class="g3" style="gap:8px">'
+    +REPO.intel_agents.map(a=>'<div class="bbx"><div class="row" style="gap:5px;margin-bottom:4px">'+dot(C.green)+'<span style="font-size:10px;font-weight:600;color:#94a3b8">'+esc(a.label)+'</span></div>'
+      +'<div style="font-size:8px;color:#4a5568;line-height:1.4;margin-bottom:4px">'+esc(a.desc)+'</div>'
+      +'<div class="row" style="gap:4px"><code>'+esc(a.file)+'</code>'+chip('→ '+a.output,C.dim,true)+'</div></div>').join('')
+    +'</div>';
+
+  const hooksCard = hooks.length
+    ? card('<div class="p">'+lbl('Top Hooks — memory/hook-performance.json')
+        +'<div class="th" style="grid-template-columns:1fr 60px 60px;margin-top:8px"><span>Hook</span><span>Platform</span><span>Signals</span></div>'
+        +hooks.slice(0,6).map(h=>'<div class="tr" style="grid-template-columns:1fr 60px 60px"><span style="font-size:10px;color:#94a3b8">'+esc((h.hook||h.formula||h.text||'—').substring(0,60))+'</span>'+chip(h.platform||h.stage||'—',C.blue,true)+chip((h.signal_rate?h.signal_rate+'%':h.signals||0)+'',C.green,true)+'</div>').join('')
+        +'</div>','')
+    : card('<div class="psm">'+lbl('Hook Performance')+'<div style="color:#4a5568;font-size:10px;margin-top:4px">Populated after first campaigns run.</div></div>','');
+
+  const dirsHtml = '<div class="g2">'
+    +REPO.intel_dirs.map(d=>lbx('<div style="font-size:9px;color:#3b82f6;font-weight:600;margin-bottom:2px">'+esc(d.path)+'</div><div style="font-size:8px;color:#4a5568;line-height:1.4">'+esc(d.desc)+'</div>',C.blue+'33')).join('')
+    +'</div>';
+
+  const subreddits = (LIVE.subreddits||[]).map(s=>chip(s,C.teal,true)).join(' ');
+  const intelCfgCard = card('<div class="p">'+lbl('Intelligence Config — intelligence-config.json')
+    +'<div style="margin-top:8px"><div style="font-size:9px;color:#94a3b8;margin-bottom:6px">Mining targets:</div>'
+    +'<div class="row" style="gap:4px;flex-wrap:wrap">'+subreddits+'</div>'
+    +(LIVE.subreddits?.length?'<div style="font-size:8px;color:#4a5568;margin-top:4px">+HN Algolia + GitHub Trending + competitor repos</div>':'')
+    +'</div></div>','');
+
+  $id('pg-intelligence').innerHTML = '<div class="fc">'
+    +briefCard
+    +sect('7 Intelligence Agents — weekly-intelligence.yml · Tue 04:00 UTC',agentGrid)
+    +hooksCard
+    +sect('Intelligence Directories',dirsHtml)
+    +intelCfgCard
+    +'</div>';
+}
+
+
+function renderStrategy(){
+  const personas = [
+    {n:'Direct Response Copywriter',c:C.amber,lens:'Hook → Problem → Agitate → Solve → CTA',rec:'Lead with verbatim Reddit phrase. Stage 2 audience needs pain named precisely, not features listed.'},
+    {n:'Brand Strategist',c:C.blue,lens:'Long-term mental availability over short-term conversion',rec:'Build the founder as face of brand. Personal story arc, not product features. Consistency over cleverness.'},
+    {n:'Growth Hacker',c:C.green,lens:'Viral coefficient and distribution surface area',rec:'Optimize for shares, not likes. Make the post quotable. Identity-signal for ICP — they share things that represent who they are.'},
+    {n:'Audience Psychologist',c:C.purple,lens:'Desire mapping and awareness stage alignment',rec:'Stage 2 = name the pain, resist selling. Save product mention for line 8+. Match language exactly.'},
+  ];
+  const pHTML = '<div class="g2">'+personas.map(p=>card('<div class="p"><div class="row" style="gap:6px;margin-bottom:8px">'+chip('Persona',p.c)+'<span style="font-size:11px;font-weight:600;color:#e2e8f0">'+esc(p.n)+'</span></div>'
+    +'<div style="font-size:8px;color:#4a5568;margin-bottom:8px">Lens: '+esc(p.lens)+'</div>'
+    +lbx('<div style="font-size:10px;color:#94a3b8;line-height:1.6">'+esc(p.rec)+'</div>',p.c)
+    +'</div>')).join('')+'</div>';
+
+  const levers = [
+    {stage:'TOFU / Stage 1–2',l:['Loss Aversion','FOMO','Identity'],note:'Unaware → awareness. Never mention product first.'},
+    {stage:'MOFU / Stage 3',  l:['Authority','Social Proof','Reciprocity'],note:'Solution-aware. Build trust, show proof.'},
+    {stage:'BOFU / Stage 4',  l:['Scarcity','FOMO','Commitment'],note:'Product-aware. Remove the last objection.'},
+  ];
+  const leverHTML = '<div class="g3">'+levers.map(s=>'<div class="bbx"><div style="font-size:9px;font-weight:600;color:#94a3b8;margin-bottom:6px">'+esc(s.stage)+'</div>'
+    +'<div class="row" style="gap:4px;flex-wrap:wrap;margin-bottom:6px">'+s.l.map(x=>chip(x,C.blue,true)).join('')+'</div>'
+    +'<div style="font-size:8px;color:#4a5568">'+esc(s.note)+'</div></div>').join('')+'</div>';
+
+  const funnelMap = [
+    {c:'LinkedIn post — the manual trap',stage:'TOFU',col:C.blue,note:'Gets shared by people who feel seen'},
+    {c:'Twitter thread — 5 signs you're the bottleneck',stage:'TOFU',col:C.blue,note:'High share potential'},
+    {c:'AEO Blog — marketing automation for solo founders',stage:'MOFU',col:C.teal,note:'Search + AI citation target'},
+    {c:'LinkedIn carousel — product vs manual workflow',stage:'BOFU',col:C.purple,note:'Warm audience only'},
+    {c:'Email sequence — welcome series',stage:'BOFU',col:C.purple,note:'email-sequence-agent.js output'},
+  ];
+  const funnelHTML = '<div class="th" style="grid-template-columns:55px 1fr 170px;margin-top:8px"><span>Stage</span><span>Content</span><span>Note</span></div>'
+    +funnelMap.map(r=>'<div class="tr" style="grid-template-columns:55px 1fr 170px">'+chip(r.stage,r.col)+'<span style="font-size:10px;color:#94a3b8">'+esc(r.c)+'</span><span style="font-size:9px;color:#4a5568">'+esc(r.note)+'</span></div>').join('');
+
+  $id('pg-strategy').innerHTML = '<div class="fc">'
+    +pHTML
+    +sect('Unified Strategy Brief','<div class="quote" style="font-size:11px;line-height:1.7">'+esc(LIVE.insights?.recommendation||'No strategy brief yet — appears after first campaign run.')+'</div><div style="font-size:8px;color:#4a5568;margin-top:6px">Generated by strategy-agent.js reading synthesis-brief.md + 4-persona deliberation</div>')
+    +sect('Funnel Router Map — funnel-router.js output',funnelHTML)
+    +sect('Psychological Levers × Awareness Stage',leverHTML)
+    +'</div>';
+}
+
+
+function renderCampaigns(){
+  const cams = LIVE.campaigns||[];
+  const histRows = cams.length
+    ? cams.map(c=>'<div class="tr" style="grid-template-columns:60px 80px 80px 1fr 60px">'
+        +'<span style="font-size:10px;font-weight:600;color:#94a3b8">'+esc(c.week||'—')+'</span>'
+        +'<span style="font-size:9px;color:#4a5568">'+fmtD(c.generated_at||c.date)+'</span>'
+        +'<span style="font-size:8px;color:'+(c.merged?C.green:C.dim)+'">'+(c.merged?'● MERGED':'○ pending')+'</span>'
+        +'<span style="font-size:9px;color:#4a5568">'+esc((c.hook||c.verbatim_hook||'').substring(0,55))+'</span>'
+        +'<span style="font-size:10px;text-align:right;color:'+((c.signals||0)>0?C.green:C.dim)+';font-weight:'+((c.signals||0)>0?'600':'400')+'">'
+        +((c.signals||0)>0?'✓ '+(c.signals||0):'—')+'</span></div>').join('')
+    : '<div style="color:#4a5568;font-size:10px;padding:10px 0">No campaign archive yet. analytics/campaigns/ populates after first run.</div>';
+
+  const issueHtml = '<div class="g3">'+REPO.issue_templates.map(t=>'<div class="bbx">'
+    +'<div style="font-size:10px;font-weight:600;color:#94a3b8;margin-bottom:4px">'+esc(t.label)+'</div>'
+    +'<div style="font-size:8px;color:#4a5568;margin-bottom:6px">Triggers: <code>'+esc(t.trigger)+'</code></div>'
+    +'<div class="row" style="gap:3px;flex-wrap:wrap">'+t.fields.map(f=>chip(f,C.dim,true)).join('')+'</div>'
+    +'</div>').join('')+'</div>';
+
+  $id('pg-campaigns').innerHTML = '<div class="fc">'
+    +sect('On-Demand Campaigns — GitHub Issue Templates',issueHtml)
+    +card('<div class="p">'+lbl('Campaign History — analytics/campaigns/')
+        +'<div class="th" style="grid-template-columns:60px 80px 80px 1fr 60px;margin-top:8px">'
+        +'<span>Week</span><span>Date</span><span>Status</span><span>Hook</span><span style="text-align:right">Signals</span></div>'
+        +histRows+'</div>')
+    +card('<div class="p">'+lbl('Resonance Log — analytics/resonance-log.md')
+        +'<pre style="font-size:9px;color:#4a5568;white-space:pre-wrap;margin-top:8px;max-height:160px;overflow-y:auto;padding:8px;background:var(--faint);border-radius:3px">'
+        +esc(LIVE.resonanceLog||'Empty — update manually after each real audience signal.')+'</pre>'
+        +'<div style="font-size:8px;color:#4a5568;margin-top:6px">memory-parser.js reads this every Thursday and updates performance.json accordingly.</div>'
+        +'</div>')
+    +'</div>';
+}
+
+
+function renderContent(){
+  let section = 'prompts';
+  function draw(){
+    let html = '<div class="fc">';
+    html += '<div class="row" style="gap:6px;margin-bottom:2px">'
+      +['prompts','rules','templates'].map(s=>'<button class="tgl'+(section===s?' on':'')+'" onclick="contentSection=\''+s+'\';renderContent()">'+{prompts:'Prompt Files (35)',rules:'Platform Rules',templates:'Templates (7)'}[s]+'</button>').join('')+'</div>';
+
+    if(section==='prompts'){
+      html += Object.entries(REPO.prompts).map(([g,files])=>
+        sect(g.charAt(0).toUpperCase()+g.slice(1)+' Prompts ('+files.length+') — .github/prompts/',
+          '<div class="g4" style="margin-top:4px">'+files.map(f=>'<div class="bbx"><div style="font-size:9px;color:#94a3b8">'+esc(f)+'.prompt.md</div></div>').join('')+'</div>')
+      ).join('');
+      html += '<div style="padding:8px 12px;background:var(--faint);border-radius:3px;font-size:8px;color:#4a5568">All prompts end with: Output ONLY [content type]. No commentary. · Dynamic values in [BRACKETS]</div>';
+    }
+    if(section==='rules'){
+      const rules = LIVE.platRulesLive && Object.keys(LIVE.platRulesLive).filter(k=>!k.startsWith('_')).length
+        ? Object.entries(LIVE.platRulesLive).filter(([k])=>!k.startsWith('_')).map(([k,v])=>{
+            const r = v.algorithm_signals_ranked||v.hook_rules||v.winning_formats;
+            const ruleList = [
+              v.max_chars?'Max '+v.max_chars+' chars':null,
+              v.optimal_chars?'Optimal '+v.optimal_chars+' chars':null,
+              v.external_links?'Links: '+v.external_links:null,
+              v.hook_rules?.never_start_with?'Never start: '+v.hook_rules.never_start_with.join(', '):null,
+              v.algorithm_signals_ranked?'Algorithm: '+v.algorithm_signals_ranked.join(' › '):null,
+              v.post_frequency||null,
+            ].filter(Boolean);
+            return card('<div class="psm"><div style="font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:8px;text-transform:capitalize">'+esc(k.replace('_',' '))+'</div>'
+              +ruleList.map(r=>'<div class="row" style="gap:5px;margin-bottom:4px"><span style="color:#4a5568;font-size:9px">·</span><span style="font-size:9px;color:#4a5568">'+esc(r)+'</span></div>').join('')
+              +'</div>');
+          })
+        : Object.entries(REPO.platform_rules).map(([k,pf])=>
+            card('<div class="psm"><div style="font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:8px">'+esc(pf.label)+'</div>'
+              +pf.rules.map(r=>'<div class="row" style="gap:5px;margin-bottom:4px"><span style="color:'+(r.includes('HUMAN')||r.includes('AMAE writes')?C.amber:C.dim)+';font-size:9px">·</span><span style="font-size:9px;color:'+(r.includes('HUMAN')?C.amber:C.dim)+';line-height:1.4">'+esc(r)+'</span></div>').join('')
+              +'</div>'));
+      html += '<div class="g2">'+rules.join('')+'</div>';
+    }
+    if(section==='templates'){
+      html += '<div class="g2">'+REPO.templates.map(t=>card('<div class="p"><div style="font-size:10px;font-weight:600;color:#94a3b8;margin-bottom:4px">'+esc(t.file)+'</div><div style="font-size:9px;color:#4a5568;margin-bottom:4px">'+esc(t.desc)+'</div><code>templates/'+esc(t.file)+'</code></div>')).join('')+'</div>';
+    }
+    html += '</div>';
+    $id('pg-content').innerHTML = html;
+  }
+  window.contentSection = section;
+  // re-render on toggle — overwrite onclick to use window var
+  function drawWithState(){
+    section = window.contentSection||'prompts';
+    $id('pg-content').innerHTML = '<div class="fc">'
+      +'<div class="row" style="gap:6px;margin-bottom:2px">'
+      +['prompts','rules','templates'].map(s=>'<button class="tgl'+(section===s?' on':'')+'" onclick="window.contentSection=\''+s+'\';renderContent()">'+{prompts:'Prompt Files (35)',rules:'Platform Rules',templates:'Templates (7)'}[s]+'</button>').join('')+'</div>';
+    // rest rendered below via flag
+    renderContentSection(section);
+  }
+  drawWithState();
+}
+function renderContentSection(section){
+  const container = $id('pg-content');
+  const existing = container.querySelector('.fc');
+  if(!existing) return;
+
+  let inner = '';
+  if(section==='prompts'){
+    inner = Object.entries(REPO.prompts).map(([g,files])=>
+      sect(g.charAt(0).toUpperCase()+g.slice(1)+' Prompts ('+files.length+') — .github/prompts/',
+        '<div class="g4" style="margin-top:4px">'+files.map(f=>'<div class="bbx"><div style="font-size:9px;color:#94a3b8">'+esc(f)+'.prompt.md</div></div>').join('')+'</div>')
+    ).join('')+'<div style="padding:8px 12px;background:var(--faint);border-radius:3px;font-size:8px;color:#4a5568">All prompts: role definition line 1 · dynamic values in [BRACKETS] · ends with: Output ONLY [type]. No commentary.</div>';
+  }
+  if(section==='rules'){
+    const rules = Object.entries(REPO.platform_rules).map(([k,pf])=>
+      card('<div class="psm"><div style="font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:8px">'+esc(pf.label)+'</div>'
+        +pf.rules.map(r=>'<div class="row" style="gap:5px;margin-bottom:4px"><span style="font-size:9px;color:'+(r.includes('HUMAN')||r.includes('AMAE writes')?C.amber:C.dim)+'">·</span><span style="font-size:9px;color:'+(r.includes('HUMAN')?C.amber:C.dim)+';line-height:1.4">'+esc(r)+'</span></div>').join('')
+        +'</div>'));
+    inner = '<div class="g2">'+rules.join('')+'</div>';
+  }
+  if(section==='templates'){
+    inner = '<div class="g2">'+REPO.templates.map(t=>card('<div class="p"><div style="font-size:10px;font-weight:600;color:#94a3b8;margin-bottom:4px">'+esc(t.file)+'</div><div style="font-size:9px;color:#4a5568;margin-bottom:4px">'+esc(t.desc)+'</div><code>templates/'+esc(t.file)+'</code></div>')).join('')+'</div>';
+  }
+  existing.innerHTML = existing.innerHTML.split('<div class="card">')[0] + inner
+    + (inner ? '' : '');
+  // Simpler: just replace the whole page
+  $id('pg-content').innerHTML = '<div class="fc">'
+    +'<div class="row" style="gap:6px">'
+    +['prompts','rules','templates'].map(s=>'<button class="tgl'+(section===s?' on':'')+'" onclick="window.contentSection=\''+s+'\';renderContentSection(window.contentSection)">'+{prompts:'Prompt Files (35)',rules:'Platform Rules',templates:'Templates (7)'}[s]+'</button>').join('')+'</div>'
+    +inner+'</div>';
+}
+
+
+function renderMedia(){
+  const secretsSet = new Set(LIVE.secretsSet||[]);
+  const apis = [
+    {n:'Ideogram v3',k:'IDEOGRAM_API_KEY',cost:'$0 (25/day free)',paid:'Paid beyond free',cap:'14 image types per week — carousel slides, headers, thumbnails, blog hero, marketplace gallery',agent:'image-generator.js'},
+    {n:'ElevenLabs',k:'ELEVENLABS_API_KEY',cost:'Free 10k chars/mo',paid:'$11/mo Creator',cap:'Voiceover MP3 for all video scripts. Committed to assets/audio/ with [skip ci].',agent:'voice-generator.js'},
+    {n:'HeyGen v2',k:'HEYGEN_API_KEY',cost:'$29/mo Creator',paid:'required',cap:'Avatar video generation + polling. Requires HEYGEN_VOICE_ID + HEYGEN_AVATAR_ID.',agent:'video-producer.js'},
+    {n:'Runway Gen-3',k:'RUNWAY_API_KEY',cost:'$12/mo Standard',paid:'required',cap:'B-roll video generation for TikTok/Reels overlay footage',agent:'video-producer.js'},
+  ];
+  const apiCards = '<div class="g2">'+apis.map(a=>{
+    const set = secretsSet.has(a.k);
+    return card('<div class="p"><div class="row" style="justify-content:space-between;margin-bottom:8px">'+dot(set?C.green:C.dim)+'<span style="font-size:12px;font-weight:600;color:'+(set?'#e2e8f0':C.dim)+'"> '+esc(a.n)+'</span>'+chip(set?'CONFIGURED':'NEEDS SETUP',set?C.green:C.dim)+'</div>'
+      +'<div style="font-size:9px;color:#94a3b8;line-height:1.5;margin-bottom:8px">'+esc(a.cap)+'</div>'
+      +'<div class="row" style="justify-content:space-between;margin-bottom:4px"><span style="font-size:9px;color:#4a5568">Cost</span><span style="font-size:9px;font-weight:600;color:'+(a.cost.startsWith('$0')||a.cost.startsWith('Free')?C.green:C.amber)+'">'+esc(a.cost)+'</span></div>'
+      +'<div class="row" style="justify-content:space-between;margin-bottom:6px"><span style="font-size:9px;color:#4a5568">Secret</span>'+chip(a.k,set?C.green:C.red,true)+'</div>'
+      +'<code>agents/'+esc(a.agent)+'</code>'
+      +(!set?'<div style="margin-top:8px;padding:6px;background:#ef444411;border-radius:2px;font-size:8px;color:#ef4444">GitHub repo → Settings → Secrets → Actions → New secret</div>':'')
+      +'</div>',set?C.green:'');
+  }).join('')+'</div>';
+
+  const imgTypes = ['LinkedIn carousel (5 slides × 1080px)','Twitter/X header','AEO blog hero','TikTok thumbnail','Instagram Reels cover','Facebook post image','Pinterest vertical (2:3)','YouTube Shorts cover','YouTube thumbnail','Email header','Newsletter header','PH gallery image','AppSumo listing image','Comparison chart infographic'];
+
+  $id('pg-media').innerHTML = '<div class="fc">'
+    +apiCards
+    +sect('14 Image Types per Week — image-generator.js','<div class="g4" style="margin-top:4px">'+imgTypes.map(t=>'<div class="bbx"><span style="font-size:9px;color:#94a3b8">'+esc(t)+'</span></div>').join('')+'</div>')
+    +sect('Scoring Algorithms — lib/scoring-algorithms.js',
+      '<div class="g3"><div class="fbx"><div style="font-size:9px;font-weight:600;color:#94a3b8;margin-bottom:6px">Buying Intent (0–10)</div><div style="font-size:8px;color:#4a5568;line-height:1.6">Tier 1 weight 3.0: looking for, willing to pay, need a tool, what do you use<br>Tier 2 weight 2.0: how do you, wish there was, frustrated that, takes forever<br>Tier 3 weight 1.0: broken, useless, nightmare, impossible</div></div>'
+      +'<div class="fbx"><div style="font-size:9px;font-weight:600;color:#94a3b8;margin-bottom:6px">Urgency Score (0–100)</div><div style="font-size:8px;color:#4a5568;line-height:1.6">+30: urgent/asap/today/deadline/need now<br>+25: post under 48 hours old<br>+20: this week/shipping soon/launching<br>+15: always/constantly/every single time</div></div>'
+      +'<div class="fbx"><div style="font-size:9px;font-weight:600;color:#94a3b8;margin-bottom:6px">Quote Score (0–10)</div><div style="font-size:8px;color:#4a5568;line-height:1.6">+2 has specific number<br>+2 has emotion word<br>+2 universally relatable<br>+2 sounds like real person not marketer<br>+2 under 20 words<br>→ Score 7+: use verbatim. 5-6: adapt. Under 5: discard.</div></div></div>')
+    +'</div>';
+}
+
+
+function renderDistribution(){
+  const auto   = REPO.dist_agents.filter(d=>d.auto===true);
+  const manual = REPO.dist_agents.filter(d=>d.auto===false);
+  const sched  = LIVE.sched?.weekly_schedule||{};
+  const times  = LIVE.sched?.post_times_utc||{};
+
+  const masterCard = card('<div class="psm"><div class="row" style="gap:6px">'+dot(C.green)+'<span style="font-size:10px;color:#10b981;font-weight:600">distributor.js — Master Orchestrator</span><span style="font-size:9px;color:#4a5568">Routes post-merge trigger to all 15 platform dist agents in parallel</span></div></div>','');
+
+  const autoGrid = '<div class="g5">'+auto.map(a=>card('<div class="psm"><div class="row" style="justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;font-weight:600;color:#94a3b8">'+esc(a.label)+'</span>'+chip('AUTO',C.green,true)+'</div><div style="font-size:8px;color:#4a5568;line-height:1.3">'+esc(a.api)+'</div></div>')).join('')+'</div>';
+  const manualGrid = '<div class="g3">'+manual.map(a=>card('<div class="psm"><div class="row" style="justify-content:space-between;margin-bottom:5px"><span style="font-size:11px;font-weight:600;color:#94a3b8">'+esc(a.label)+'</span>'+chip('MANUAL',C.amber,true)+'</div><div style="font-size:8px;color:#4a5568;margin-bottom:6px">'+esc(a.api)+'</div><div style="padding:4px 7px;background:#f59e0b11;border-radius:2px;font-size:7px;color:#f59e0b">AMAE writes. You post. No exceptions.</div></div>',C.amber)).join('')+'</div>';
+
+  const schedDays = Object.entries(sched).map(([day,data])=>'<div style="padding:9px 12px;background:var(--bg);border-radius:3px;border:1px solid '+(data.note&&data.note.includes('HUMAN')?C.amber+'44':'var(--border)')+'"><div style="font-size:9px;font-weight:600;color:#94a3b8;text-transform:capitalize;margin-bottom:4px">'+esc(day)+'</div>'
+    +'<div class="row" style="gap:4px;margin-bottom:5px">'+(data.platforms||[]).map(p=>chip(p,C.blue,true)).join('')+'</div>'
+    +chip(data.funnel_stage||'',data.funnel_stage==='TOFU'?C.blue:data.funnel_stage==='MOFU'?C.teal:C.purple,true)
+    +(data.note&&data.note.includes('HUMAN')?'<div style="font-size:7px;color:#f59e0b;margin-top:4px">'+esc(data.note)+'</div>':'')
+    +'</div>');
+  const schedHtml = '<div class="g3">'+(schedDays.length?schedDays.join(''):'<div class="fbx" style="color:#4a5568;font-size:9px">Schedule from posting-schedule.json</div>')+'</div>';
+  const timesHtml = Object.entries(times).length
+    ? '<div class="row" style="gap:8px;margin-top:10px">'+Object.entries(times).map(([p,t])=>'<div class="fbx"><span style="font-size:8px;color:#4a5568">'+esc(p)+': </span><span style="font-size:8px;color:#f59e0b;font-weight:600">'+esc(t)+' UTC</span></div>').join('')+'</div>'
+    : '';
+
+  $id('pg-distribution').innerHTML = '<div class="fc">'
+    +masterCard
+    +sect('Auto-post on PR merge (9 platforms)',autoGrid)
+    +sect('Manual only — AMAE writes, founder posts (3+)',manualGrid)
+    +sect('Posting Schedule — posting-schedule.json',schedHtml+timesHtml)
+    +'</div>';
+}
+
+
+function renderEvolution(){
+  const abs = LIVE.absorbed||[];
+  const dis = LIVE.discarded||[];
+
+  const evoFlow = '<div style="display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr;align-items:center;gap:4px;margin-top:10px">'
+    +REPO.evo_agents.flatMap((a,i)=>[
+      '<div style="padding:14px 16px;background:var(--bg);border-radius:3px;border:1px solid #8b5cf644"><div class="row" style="gap:5px;margin-bottom:6px">'+dot(C.purple)+'<span style="font-size:10px;font-weight:600;color:#8b5cf6">'+esc(a.label)+'</span></div>'
+      +'<div style="font-size:8px;color:#4a5568;line-height:1.5;margin-bottom:5px">'+esc(a.desc)+'</div>'
+      +'<code>agents/'+esc(a.file)+'</code></div>',
+      i<2?'<div style="text-align:center;color:#f59e0b;font-size:18px">→</div>':null,
+    ]).filter(Boolean).join('')+'</div>';
+
+  const topics = ['marketing-automation','growth-hacking','content-marketing','ai-marketing','prompt-engineering','indie-hacker','solo-founder','saas-marketing','audience-research'];
+
+  $id('pg-evolution').innerHTML = '<div class="fc">'
+    +card('<div class="p">'+lbl('Evolution Architecture — weekly-evolution.yml · Sun 23:30 UTC','12')+evoFlow+'</div>',C.purple)
+    +alrt('<div style="font-size:10px;font-weight:600;color:#8b5cf6;margin-bottom:4px">🔴 Critical Zone — Evolution PRs</div><div style="font-size:9px;color:#94a3b8">Every Evolution PR requires founder review. AI cannot decide what AMAE should become. Merge = absorb. Close = discard. Never auto-merged.</div>','purple')
+    +'<div class="g2">'
+    +card('<div class="p">'+lbl('Absorbed Repos')
+        +'<div style="font-size:22px;font-weight:700;color:#10b981;margin-bottom:8px">'+abs.length+'</div>'
+        +(abs.length?abs.slice(0,6).map(r=>'<div style="font-size:9px;color:#94a3b8;margin-bottom:4px">✓ '+esc(r.repo||String(r))+'</div>').join('')
+          :'<div style="font-size:9px;color:#4a5568">None yet. Scout runs each Sunday 23:30 UTC.</div>')
+        +'<div style="margin-top:8px;font-size:8px;color:#4a5568">'+dis.length+' repos evaluated and discarded</div>'
+        +'</div>',C.green)
+    +card('<div class="p">'+lbl('Monitored Topics — watchlist.json')
+        +'<div class="row" style="gap:4px;flex-wrap:wrap;margin:8px 0">'+topics.map(t=>chip(t,C.purple,true)).join('')+'</div>'
+        +lbl('Pattern Library — intelligence/patterns/',5)
+        +['hook-formulas.md','prompt-architectures.md','platform-mechanics.md','workflow-patterns.md'].map(f=>'<div class="row" style="gap:5px;margin-bottom:4px">'+dot(C.green)+'<span style="font-size:9px;color:#94a3b8">'+f+'</span></div>').join('')
+        +div()
+        +lbl('Intelligence Flow',5)
+        +REPO.intel_dirs.filter(d=>['absorbed','discovered','holding','discarded'].some(s=>d.path.includes(s))).map(d=>lbx('<div style="font-size:9px;color:#94a3b8;font-weight:600;margin-bottom:2px">'+esc(d.path)+'</div><div style="font-size:8px;color:#4a5568">'+esc(d.desc)+'</div>',d.path.includes('absorbed')?C.green:d.path.includes('discarded')?C.dim:C.amber)).join('')
+        +'</div>')
+    +'</div>'
+    +'</div>';
+}
+
+
+function renderGitHub(){
+  const cits = LIVE.citations?.items||LIVE.citations?.tracked||[];
+
+  const layers = [
+    {n:'AEO Engine',d:'README + blog articles optimized for AI citation. Question H2s, answer-first, FAQ schema. Target: ChatGPT/Perplexity/Claude responses.'},
+    {n:'Authority Signal',d:'Consistent weekly commits, quality code, AGENTS.md. GitHub repo = credibility signal to humans + AIs indexing it.'},
+    {n:'LLM Training Data',d:'Well-structured markdown in public repos gets scraped. Own the answers in the next model generation.'},
+    {n:'Distribution Surface',d:'GitHub Discussions, Releases, README — each a content surface. dist-github.js handles all. blog-deployer.js publishes AEO articles.'},
+    {n:'Launch Launchpad',d:'Star velocity on launch day signals Product Hunt algorithm. GitHub fans → PH upvoters. launch-protocol.yml + star-velocity-agent.js.'},
+    {n:'Self-Evolution',d:'AMAE reads the world's best marketing repos weekly. The tool gets smarter by reading what's public.'},
+  ];
+
+  const ghAgents = '<div class="g3">'+REPO.github_agents.map(a=>card('<div class="psm"><div style="font-size:10px;font-weight:600;color:#94a3b8;margin-bottom:4px">'+esc(a.label)+'</div><div style="font-size:8px;color:#4a5568;margin-bottom:5px">'+esc(a.desc)+'</div><code>agents/'+esc(a.file)+'</code></div>')).join('')+'</div>';
+  const citsHtml = cits.length
+    ? cits.map(c=>lbx('<div class="row" style="justify-content:space-between"><span style="font-size:10px;font-weight:600;color:'+(c.cited?C.green:C.dim)+'">'+esc(c.ai||'AI')+'</span>'+chip(c.cited?'CITED':'not yet',c.cited?C.green:C.dim,true)+'</div><div style="font-size:8px;color:#4a5568;margin-top:2px">Query: '+esc(c.query||'—')+'</div>'+( c.date?'<div style="font-size:7px;color:#4a5568;margin-top:1px">Last: '+fmtD(c.date)+'</div>':''),c.cited?C.green:C.dim)).join('')
+    : '<div style="font-size:9px;color:#4a5568">No citation tracking data yet. memory/citations.json populated by citation-tracker.js.</div>';
+
+  $id('pg-github').innerHTML = '<div class="fc">'
+    +sect('6-Layer GitHub Marketing Stack','<div class="g3">'+layers.map(l=>'<div class="bbx"><div style="font-size:9px;font-weight:600;color:#3b82f6;margin-bottom:4px">'+esc(l.n)+'</div><div style="font-size:8px;color:#4a5568;line-height:1.4">'+esc(l.d)+'</div></div>').join('')+'</div>')
+    +sect('GitHub Platform Agents',ghAgents)
+    +sect('AI Citation Tracking — memory/citations.json',citsHtml)
+    +sect('docs/ — GitHub Pages AEO Blog (deploy-blog.yml)','<div class="g3">'+['docs/index.html — Landing page','docs/dashboard.html — This dashboard','docs/blog/ — AEO articles (auto-deployed)','docs/_config.yml — Jekyll config','public/css/blog.css — Blog stylesheet','public/js/main.js — Dashboard JS'].map(f=>'<div class="bbx"><div style="font-size:9px;color:#3b82f6">'+esc(f.split('—')[0].trim())+'</div><div style="font-size:8px;color:#4a5568">'+esc(f.split('—').slice(1).join('—').trim())+'</div></div>').join('')+'</div>')
+    +'</div>';
+}
+
+
+function renderMarketplace(){
+  const mkts = [
+    {n:'Product Hunt',aeo:'Medium — PH posts indexed by AI',gate:'50+ upvotes day 1 — coordinate community first',cost:'Free'},
+    {n:'G2',          aeo:'VERY HIGH — reviews appear in AI search results',gate:'Free listing — AEO value justifies early setup now',cost:'Free'},
+    {n:'Capterra',    aeo:'HIGH — category pages rank in AI results',gate:'Free listing — high domain authority',cost:'Free'},
+    {n:'AppSumo',     aeo:'Medium',gate:'Revenue-stage product with LTD potential. Gate: after Phase 6 + MRR.',cost:'Revenue share'},
+    {n:'Indie Hackers',aeo:'HIGH — IH posts indexed, founder community',gate:'Product page + monthly milestone post. Low gate — worth doing early.',cost:'Free'},
+    {n:'Gumroad',     aeo:'Low',gate:'For info products / templates / AMAE template sales',cost:'Transaction fee'},
+  ];
+  const liveData = LIVE.mktStats;
+
+  $id('pg-marketplace').innerHTML = '<div class="fc">'
+    +alrt('<div style="font-size:10px;font-weight:600;color:#f59e0b;margin-bottom:4px">🔒 Phase 6 Gate — marketplace-agent.js is built, marketplace-profiles.json is configured</div><div style="font-size:9px;color:#94a3b8">Activation is a founder decision — not a schedule. Gate: 3+ months private use + consistent resonance signals.</div>')
+    +'<div class="g3">'+mkts.map(m=>card('<div class="p"><div class="row" style="justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;font-weight:600;color:#94a3b8">'+esc(m.n)+'</span>'+chip('NOT LISTED',C.dim)+'</div><div style="font-size:8px;color:#4a5568;margin-bottom:6px"><span style="color:#f59e0b">AEO: </span>'+esc(m.aeo)+'</div><div class="fbx" style="margin-bottom:6px"><div style="font-size:9px;color:#4a5568;line-height:1.5">'+esc(m.gate)+'</div></div><div class="row" style="justify-content:space-between"><span style="font-size:8px;color:#4a5568">Cost</span><span style="font-size:8px;font-weight:600;color:'+(m.cost==='Free'?C.green:C.amber)+'">'+esc(m.cost)+'</span></div></div>')).join('')+'</div>'
+    +sect('marketplace-agent.js — What It Generates (marketplace-listing.prompt.md)','<div class="g2">'+['Product Hunt tagline (under 60 chars) + gallery image prompts + maker comment template','AppSumo deal headline + 3-tier pricing copy + feature bullet points','G2 / Capterra category selection + review request email template','Indie Hackers product page description + monthly milestone post template','Launch day sequence: T-72h teaser → T-0 PH submission → T+1 follow-through','Email sequences for marketplace launches: announcement → mid-deal → last chance'].map(t=>'<div class="bbx"><span style="font-size:9px;color:#94a3b8">'+esc(t)+'</span></div>').join('')+'</div>')
+    +'</div>';
+}
+
+
+function renderMemory(){
+  const p   = LIVE.perf;
+  const ins = LIVE.insights;
+  const fm  = LIVE.funnelMet;
+
+  const stages = fm?.by_stage||{};
+  const funnelCards = '<div class="g3">'+['TOFU','MOFU','BOFU'].map(stage=>{
+    const s = stages[stage]||{};
+    const col = stage==='TOFU'?C.blue:stage==='MOFU'?C.teal:C.purple;
+    const pct = fm?.recommended_mix_next_week?.[stage]||(stage==='TOFU'?60:stage==='MOFU'?30:10);
+    return card('<div class="psm">'+chip(stage,col)+'<div style="margin-top:8px">'+bar(pct,col,true)+'</div><div style="margin-top:6px;font-size:9px;color:#4a5568">Target: '+pct+'%</div><div style="font-size:9px;color:#4a5568;margin-top:3px">Posts: '+(s.posts_last_30_days||0)+' · Signals: '+(s.resonance_signals||0)+'</div></div>');
+  }).join('')+'</div>';
+
+  const plat = p?.platforms||{};
+  const platRows = Object.entries(plat).length
+    ? Object.entries(plat).map(([n,d])=>'<div class="tr" style="grid-template-columns:90px 80px 70px 1fr"><span style="font-size:10px;color:#94a3b8;text-transform:capitalize">'+esc(n)+'</span><span style="font-size:10px;color:'+((d.resonance_signals_total||0)>0?C.green:C.dim)+'">'+( d.resonance_signals_total||0)+' signals</span><span style="font-size:9px;color:#4a5568">'+( d.posts_published||d.threads_published||d.issues_sent||0)+' posts</span><span style="font-size:9px;color:#4a5568">'+esc(d.notes||'')+'</span></div>').join('')
+    : '<div style="color:#4a5568;font-size:9px;padding:8px 0">Platform data populated after first campaigns run.</div>';
+
+  const loop = '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;align-items:center;margin-top:8px">'
+    +[
+      {s:'Founder logs',d:'analytics/resonance-log.md'},
+      {s:'memory-parser.js',d:'→ performance.json (Step 1 Thu)'},
+      {s:'memory-agent.js',d:'→ insights.json (Step 2 Thu)'},
+      {s:'synthesizer.js',d:'reads insights before brief'},
+      {s:'Content adapts',d:'each week reflects last week'},
+    ].map((item,i,arr)=>'<div style="text-align:center;padding:8px;background:var(--bg);border-radius:3px;border:1px solid var(--faint)"><div style="font-size:8px;font-weight:600;color:#f59e0b;margin-bottom:3px">'+esc(item.s)+'</div><div style="font-size:7px;color:#4a5568;line-height:1.3">'+esc(item.d)+'</div></div>'+(i<arr.length-1?'<span style="color:#f59e0b;font-size:14px;text-align:center">→</span>':'')).join('')+'</div>';
+
+  const memFilesHtml = '<div class="fc">'+REPO.memory_files.map(m=>lbx('<div style="font-size:9px;font-weight:600;color:#3b82f6;margin-bottom:2px">'+esc(m.file)+'</div><div style="font-size:8px;color:#4a5568;line-height:1.4">'+esc(m.desc)+'</div>',C.blue+'33')).join('')+'</div>';
+  const analFilesHtml = '<div class="fc">'+REPO.analytics_files.map(m=>lbx('<div style="font-size:9px;font-weight:600;color:#14b8a6;margin-bottom:2px">'+esc(m.file)+'</div><div style="font-size:8px;color:#4a5568;line-height:1.4">'+esc(m.desc)+'</div>',C.teal+'33')).join('')+'</div>';
+
+  $id('pg-memory').innerHTML = '<div class="fc">'
+    +funnelCards
+    +card('<div class="p">'+lbl('Platform Performance — memory/performance.json')+'<div class="th" style="grid-template-columns:90px 80px 70px 1fr;margin-top:8px"><span>Platform</span><span>Signals</span><span>Posts</span><span>Notes</span></div>'+platRows+'</div>')
+    +'<div class="g2">'+sect('Memory Files — 7 total',memFilesHtml)+sect('Analytics Files — 5 total',analFilesHtml)+'</div>'
+    +sect('Memory Learning Loop',loop)
+    +'</div>';
+}
+
+
+function renderResonance(){
+  const sigColors = {Comment:C.amber,DM:C.teal,Share:C.blue,'Follow + Engage':C.purple,'Reply-with-story':C.green};
+  const existing = LIVE.perf?.resonance_signals_total||0;
+  const weeksWO  = LIVE.perf?.weeks_without_resonance||0;
+
+  $id('pg-resonance').innerHTML = '<div class="g2">'
+    +card('<div class="p">'+lbl('Resonance Signals Captured')
+        +'<div class="stat32" style="color:'+(existing>=3?C.green:C.amber)+';margin-bottom:8px">'+existing+'</div>'
+        +lbl('What counts as a real signal',8)
+        +[
+          [true,'"this is exactly my situation" or equivalent'],
+          [true,'DM asking for more information or how to get access'],
+          [true,'Someone sharing the post without being asked'],
+          [true,'Reply with their own version of the same frustration'],
+          [true,'New follower who immediately engages with 2+ posts'],
+          [false,'Likes with no comments'],
+          [false,'Generic comments ("great post!", "thanks for sharing")'],
+          [false,'Follower growth with no engagement'],
+          [false,'Impressions and reach numbers going up but silence'],
+        ].map(([r,t])=>'<div class="row" style="gap:7px;margin-bottom:5px"><span style="color:'+(r?C.green:C.red)+';font-size:10px;flex-shrink:0">'+(r?'✓':'✗')+'</span><span style="font-size:9px;color:'+(r?C.muted:C.dim)+';line-height:1.4">'+esc(t)+'</span></div>').join('')
+        +div()
+        +(weeksWO>=6?alrt('<div style="font-size:10px;font-weight:600;color:#f59e0b;margin-bottom:3px">⚠ 6-Week Rule Triggered</div><div style="font-size:9px;color:#94a3b8">No resonance for 6 weeks = the_desire section needs revision. Run Desire Discovery Protocol again.</div>'):'')
+        +'<div class="fbx" style="margin-top:8px"><div style="font-size:9px;color:#4a5568">Update analytics/resonance-log.md after each real audience signal. memory-parser.js reads it every Thursday and adapts the next campaign accordingly.</div></div>'
+        +'</div>')
+    +card('<div class="p">'+lbl('Signal Log — analytics/resonance-log.md','12')
+        +(LIVE.resonanceLog
+          ?'<pre style="font-size:9px;color:#4a5568;white-space:pre-wrap;max-height:400px;overflow-y:auto;padding:8px;background:var(--faint);border-radius:3px">'+esc(LIVE.resonanceLog)+'</pre>'
+          :'<div style="color:#4a5568;font-size:10px;padding:10px 0">No signals logged yet. Post content and return here when something resonates.</div>')
+        +'<div style="margin-top:8px;font-size:8px;color:#4a5568">To add signals: edit analytics/resonance-log.md in your repo with format: Date | Type | Platform | Note</div>'
+        +'</div>')
+    +'</div>';
+}
+
+
+function renderConfig(){
+  const dna = LIVE.product;
+  const bv  = LIVE.brandVoice||{};
+  const neverSay = bv.never_say||[];
+  const icp = dna.icp||{};
+  const sol = dna.solution||{};
+  const pricing = dna.pricing||{};
+
+  const desireFields = [
+    {k:'what_they_secretly_want', l:'What They Secretly Want'},
+    {k:'what_they_fear_most',     l:'What They Fear Most'},
+    {k:'what_they_are_frustrated_by',l:'What They Are Frustrated By'},
+    {k:'who_they_want_to_become', l:'Who They Want to Become'},
+  ];
+  const desireHtml = desireFields.map(f=>{
+    const filled = dna.dna.filled.includes(f.k);
+    const val    = LIVE.product.desire?.[f.k]||'';
+    return '<div style="padding:9px 12px;background:'+(filled?'var(--bg)':'#ef444408')+';border-radius:3px;border:1px solid '+(filled?'#10b98133':'#ef444433)+'">'
+      +'<div class="row" style="justify-content:space-between;margin-bottom:4px"><span style="font-size:9px;font-weight:600;color:'+(filled?C.muted:C.red)+'">'+esc(f.l)+'</span>'+chip(filled?'✓ filled':'MISSING',filled?C.green:C.red,true)+'</div>'
+      +(filled&&val&&!val.startsWith('FILL')?'<div style="font-size:9px;color:#4a5568;line-height:1.5;margin-bottom:4px">'+esc(val.substring(0,120))+'...</div>':'')
+      +'<div style="font-size:7px;color:#4a5568">config/product-dna.json → the_desire.'+esc(f.k)+'</div>'
+      +'</div>';
+  }).join('');
+
+  const protocol = [
+    {n:'Q1',q:'Describe one real person who desperately needs your product. Not a demographic — a person. What is their day like? What did they try before?'},
+    {n:'Q2',q:"What is the thing they feel at 2am that they'd never say in a professional setting? The fear, the frustration, the inadequacy?"},
+    {n:'Q3',q:'Who do they want to BECOME by using your product? Not what they want to DO — who do they want to BE?'},
+    {n:'Q4',q:'What have they already tried that failed, and why? What does that failure say about what they really need?'},
+  ].map(q=>lbx('<div style="font-size:9px;font-weight:600;color:#f59e0b;margin-bottom:4px">'+q.n+'</div><div style="font-size:10px;color:#94a3b8;line-height:1.6">'+esc(q.q)+'</div>',C.amber)).join('');
+
+  const productRow = (label,val,note='') => '<div class="row" style="gap:8px;margin-bottom:6px;align-items:flex-start"><span style="font-size:9px;color:#4a5568;min-width:90px;flex-shrink:0">'+esc(label)+'</span><span style="font-size:10px;color:#94a3b8;flex:1">'+esc(String(val||'—'))+'</span>'+(note?'<span style="font-size:8px;color:#4a5568">'+esc(note)+'</span>':'')+'</div>';
+
+  $id('pg-config').innerHTML = '<div class="fc">'
+    +alrt('<div style="font-size:10px;font-weight:600;color:#ef4444;margin-bottom:4px">🔴 Critical Zone — the_desire section</div><div style="font-size:9px;color:#94a3b8">Most important 2 hours in the build. Read 50+ posts in ICP subreddits first. Answer from lived knowledge. Do NOT let AI generate this section.</div>','red')
+    +card('<div class="p">'+lbl('Product Identity — config/product-dna.json')
+        +productRow('Name',dna.name)
+        +productRow('Stage',dna.stage)
+        +productRow('Category',dna.icp?.primary?.split(' at ')[0]||'—')
+        +productRow('Subreddits',(icp.subreddits||[]).join(', '))
+        +productRow('ICP',icp.primary||'—')
+        +productRow('Pricing',pricing.model||'—',pricing.price||'')
+        +productRow('Core Mechanism',sol.core_mechanism||'—')
+        +productRow('Unique Angle',sol.unique_angle||'—')
+        +productRow('Proof Point',sol.proof_point||'—')
+        +'</div>')
+    +card('<div class="p">'+lbl('DNA Completion — '+dna.dna.pct+'%','8')+bar(dna.dna.pct,dna.dna.pct<100?C.amber:C.green,true)+'<div class="fc" style="margin-top:12px;gap:6px">'+desireHtml+'</div></div>',dna.dna.pct<100?C.red:'')
+    +sect('Desire Discovery Protocol',protocol)
+    +(neverSay.length?sect('Never Say List — brand_voice.never_say','<div class="row" style="gap:4px;flex-wrap:wrap">'+neverSay.map(w=>chip(w,C.red,true)).join('')+'</div><div style="font-size:8px;color:#4a5568;margin-top:6px">guardrail-agent.js scans all generated content for these and rewrites.</div>'):'')
+    +'</div>';
+}
+
+
+function renderDevTools(){
+  const secretsSet = new Set(LIVE.secretsSet||[]);
+  let activeGroup = 'AI';
+  const groups = ['AI','GitHub','Social','Newsletter','Visual','Marketplace','Media'];
+
+  function drawSecrets(){
+    const filtered = REPO.secrets.filter(s=>s.group===activeGroup);
+    const phColors = {Required:C.green,Auto:C.teal,'Phase 3':C.blue,'Phase 4':C.amber,'Phase 5':C.orange};
+    return '<div class="th" style="grid-template-columns:190px 80px 70px 1fr;margin-top:8px"><span>Secret Key</span><span>Phase</span><span>Status</span><span>Note</span></div>'
+      +filtered.map(s=>{
+        const set = secretsSet.has(s.key);
+        return '<div class="tr" style="grid-template-columns:190px 80px 70px 1fr"><code style="font-size:9px">'+esc(s.key)+'</code>'+chip(s.phase,phColors[s.phase]||C.dim,true)+'<div class="row" style="gap:4px">'+dot(set?C.green:s.phase==='Auto'?C.teal:C.dim)+'<span style="font-size:8px;color:'+(set?C.green:C.dim)+'">'+(set?'set':s.phase==='Auto'?'auto':'—')+'</span></div><span style="font-size:8px;color:#4a5568">'+esc(s.note)+'</span></div>';
+      }).join('');
+  }
+
+  function redraw(){
+    $id('secrets-content').innerHTML =
+      '<div class="row" style="gap:5px;margin-bottom:10px">'+groups.map(g=>'<button class="tgl'+(g===activeGroup?' on':'')+'" onclick="window._devGroup=\''+g+'\';document.querySelectorAll(\'.tgl\').forEach(b=>b.classList.toggle(\'on\',b.textContent.startsWith(b.textContent)));renderDevTools()">'+g+' ('+REPO.secrets.filter(s=>s.group===g).length+')</button>').join('')+'</div>'
+      +drawSecrets();
+  }
+  window._devGroup = activeGroup;
+
+  const scriptsHtml = REPO.scripts.map(s=>'<div class="bbx" style="margin-bottom:8px"><code style="display:block;margin-bottom:4px">'+esc(s.cmd)+'</code><div style="font-size:9px;color:#4a5568;margin-bottom:2px">'+esc(s.desc)+'</div><div style="font-size:8px;color:#4a5568">When: '+esc(s.when)+'</div></div>').join('');
+
+  const libHtml = '<div class="g4">'+REPO.lib.map(l=>'<div class="bbx"><div style="font-size:9px;font-weight:600;color:#94a3b8;margin-bottom:3px">'+esc(l.file)+'</div><div style="font-size:8px;color:#4a5568;line-height:1.4;margin-bottom:4px">'+esc(l.desc)+'</div><div class="row" style="gap:4px">'+chip(l.tier,l.tier==='Free'?C.green:l.tier==='—'?C.dim:C.amber,true)+'</div></div>').join('')+'</div>';
+
+  const archRules = [
+    ['ESM only','import/export — no CommonJS, no require()'],
+    ['Native fetch()','No HTTP libraries whatsoever'],
+    ['File I/O','All through lib/file-utils.js'],
+    ['Paths','process.cwd() — no __dirname'],
+    ['Fatal errors','console.error + process.exit(1)'],
+    ['Bot commits','Always tagged [skip ci]'],
+    ['PRs','peter-evans/create-pull-request@v6'],
+    ['Auto-merge','Never — all PRs require founder review'],
+  ].map(([r,d])=>'<div class="row" style="gap:8px;margin-bottom:6px;align-items:flex-start">'+chip(r,C.blue)+'<span style="font-size:8px;color:#4a5568;flex:1">'+esc(d)+'</span></div>').join('');
+
+  $id('pg-devtools').innerHTML = '<div class="fc">'
+    +'<div class="g2">'
+    +sect('npm Scripts (package.json)',scriptsHtml)
+    +'<div class="fc">'
+    +sect('Architecture Rules — enforced in all 44 agents',archRules)
+    +sect('Dev Container — .devcontainer/devcontainer.json','<div class="fbx"><div class="row" style="gap:6px;margin-bottom:5px"><span style="font-size:8px;color:#4a5568">Image:</span><code>javascript-node:20</code></div><div class="row" style="gap:6px;margin-bottom:5px"><span style="font-size:8px;color:#4a5568">Features:</span>'+chip('GitHub CLI',C.teal,true)+'</div><div class="row" style="gap:6px;margin-bottom:5px"><span style="font-size:8px;color:#4a5568">Post-create:</span><code>npm install</code></div><div class="row" style="gap:4px;flex-wrap:wrap">'+['vscode-eslint','prettier','github.copilot','vscode-yaml','vscode-github-actions'].map(e=>chip(e,C.dim,true)).join('')+'</div></div>')
+    +'</div>'
+    +'</div>'
+    +sect('Lib Files — 16 shared utilities',libHtml)
+    +'<div class="card"><div class="p">'+lbl('GitHub Secrets — '+REPO.secrets.length+' total across 5 phases','10')+('<div id="secrets-content">'+('<div class="row" style="gap:5px;margin-bottom:10px">'+groups.map(g=>'<button class="tgl'+(g==='AI'?' on':'')+'" onclick="window._devGroup=\''+g+'\';$id(\'secrets-content\').innerHTML=window._drawSecrets(window._devGroup)">'+g+' ('+REPO.secrets.filter(s=>s.group===g).length+')</button>').join('')+'</div>')+drawSecrets())+'</div>'+'<div style="margin-top:8px;font-size:8px;color:#4a5568">Add: GitHub repo → Settings → Secrets and variables → Actions → New repository secret</div></div></div>'
+    +'</div>';
+
+  window._drawSecrets = function(grp){
+    const filtered = REPO.secrets.filter(s=>s.group===grp);
+    const phColors = {Required:C.green,Auto:C.teal,'Phase 3':C.blue,'Phase 4':C.amber,'Phase 5':'#f97316'};
+    return '<div class="row" style="gap:5px;margin-bottom:10px">'+groups.map(g=>'<button class="tgl'+(g===grp?' on':'')+'" onclick="window._devGroup=\''+g+'\';$id(\'secrets-content\').innerHTML=window._drawSecrets(\''+g+'\')">'+g+' ('+REPO.secrets.filter(s=>s.group===g).length+')</button>').join('')+'</div>'
+      +'<div class="th" style="grid-template-columns:190px 80px 70px 1fr;margin-top:8px"><span>Secret Key</span><span>Phase</span><span>Status</span><span>Note</span></div>'
+      +filtered.map(s=>{
+        const set = secretsSet.has(s.key);
+        return '<div class="tr" style="grid-template-columns:190px 80px 70px 1fr"><code style="font-size:9px">'+esc(s.key)+'</code>'+chip(s.phase,phColors[s.phase]||C.dim,true)+'<div class="row" style="gap:4px">'+dot(set?C.green:s.phase==='Auto'?C.teal:C.dim)+'<span style="font-size:8px;color:'+(set?C.green:C.dim)+'">'+(set?'set':s.phase==='Auto'?'auto':'—')+'</span></div><span style="font-size:8px;color:#4a5568">'+esc(s.note)+'</span></div>';
+      }).join('');
+  };
+}
+
+
+function renderCost(){
+  const tiers = [
+    {n:'Phase 1 — MVP',cost:'$0/mo',gate:'Now — start here',col:C.green,
+     items:[['OpenRouter','$0','Free tier'],['Reddit API','$0','No auth'],['HN API','$0','Free'],['GitHub Actions','$0','2,000 min/mo'],['GitHub Pages','$0','AEO blog'],['GROQ','$0','14,400 req/day']]},
+    {n:'Phase 3 — Text Distribution',cost:'~$4/mo',gate:'3 resonance signals',col:C.blue,
+     items:[['Claude Haiku 4.5','~$2.50','Content gen'],['Claude Sonnet 4','~$1.50','Strategy'],['Distribution APIs','$0','Free tiers']]},
+    {n:'Phase 4 — Images',cost:'~$7/mo',gate:'6+ signals / 3 consistent weeks',col:C.amber,
+     items:[['Ideogram v3','~$3.50','Beyond 25 free/day'],['Claude APIs','~$3.50','']]},
+    {n:'Phase 5 — Full Media',cost:'~$64/mo',gate:'Consistent weekly resonance 4+ weeks',col:'#f97316',
+     items:[['Claude Sonnet 4','$5','Strategy+Intel'],['Claude Haiku 4.5','$2.50','Content'],['Ideogram v3','$3.50','Full suite'],['ElevenLabs','$11','Voiceover'],['HeyGen','$29','Avatar video'],['Runway','$12','B-roll'],['Evolution AI','~$1.50','']]},
+  ];
+
+  $id('pg-cost').innerHTML = '<div class="fc">'
+    +alrt('<div style="font-size:10px;font-weight:600;color:#10b981;margin-bottom:3px">Current cost: $0/month</div><div style="font-size:9px;color:#94a3b8">Every tier gated on real resonance signals — not a schedule. Only pay when AMAE proves it resonates.</div>','green')
+    +'<div class="g2">'+tiers.map(t=>card('<div class="p"><div class="row" style="justify-content:space-between;margin-bottom:10px"><span style="font-size:11px;font-weight:600">'+esc(t.n)+'</span><span style="font-size:14px;font-weight:700;color:'+t.col+'">'+t.cost+'</span></div><div style="padding:6px 10px;background:'+t.col+'11;border-radius:2px;margin-bottom:10px;font-size:8px;color:'+t.col+'">Gate: '+esc(t.gate)+'</div>'+t.items.map(([i,c,n])=>'<div class="row" style="justify-content:space-between;margin-bottom:5px"><span style="font-size:9px;color:#4a5568">'+esc(i)+'</span><div class="row" style="gap:5px">'+(n?'<span style="font-size:7px;color:#4a5568">'+esc(n)+'</span>':'')+'<span style="font-size:9px;font-weight:600;color:'+(c==='$0'?C.green:'#94a3b8')+'">'+esc(c)+'</span></div></div>').join('')+'</div>')).join('')+'</div>'
+    +sect('Signal-Gated Expansion Logic','<div class="g4">'+[
+      {gate:'1-2 signals',act:'Continue $0. Observe and log only.'},
+      {gate:'3 signals',act:'Unlock Phase 3 (~$4/mo). Content quality now justifies cost.'},
+      {gate:'6 signals / 3 weeks',act:'Unlock images (~$7/mo). Visual amplifies proven hooks.'},
+      {gate:'4+ weeks consistent',act:'Unlock full media (~$64/mo). System proven.'},
+    ].map(g=>'<div style="padding:10px;background:var(--bg);border-radius:3px;text-align:center"><div style="font-size:9px;font-weight:600;color:#f59e0b;margin-bottom:6px">'+esc(g.gate)+'</div><div style="font-size:8px;color:#4a5568;line-height:1.4">'+esc(g.act)+'</div></div>').join('')+'</div>')
+    +sect('GitHub Actions Free Tier — 2,000 min/month','<div class="g4">'+[['Intelligence (Tue)','30 min'],['Campaign (Thu)','45 min'],['Distribution (Fri)','20 min'],['Evolution (Sun)','45 min'],['Profile README (daily)','10 min'],['Blog + Dashboard','10 min'],['On-demand campaigns','~30 min ea.'],['Monthly growth','30 min']].map(([w,m])=>'<div style="padding:8px 10px;background:var(--bg);border-radius:3px"><div style="font-size:8px;color:#4a5568;margin-bottom:3px">'+esc(w)+'</div><div style="font-size:12px;font-weight:600;color:#f59e0b">'+m+'</div></div>').join('')+'</div><div style="margin-top:8px;font-size:8px;color:#4a5568">~220 min/month on scheduled workflows. Well within 2,000 min free tier.</div>')
+    +'</div>';
+}
+
+
+const pendingCount = 0;
+const evoCount = 0;
+const TABS = [{"id":"overview","label":"Overview"},{"id":"intelligence","label":"Intelligence"},{"id":"strategy","label":"Strategy"},{"id":"campaigns","label":"Campaigns"},{"id":"content","label":"Content & Prompts"},{"id":"media","label":"Media"},{"id":"distribution","label":"Distribution"},{"id":"evolution","label":"Evolution"},{"id":"github","label":"GitHub Stack"},{"id":"marketplace","label":"Marketplace"},{"id":"memory","label":"Memory"},{"id":"resonance","label":"Resonance"},{"id":"config","label":"Config"},{"id":"devtools","label":"Dev Tools"},{"id":"cost","label":"Cost"}];
+const REPO = {
+  intel_agents:   [{"file":"copy-excavator.js","label":"Copy Excavator","output":"copy-ammunition.md","desc":"Reddit + GitHub Issues → verbatim pain phrases. Scores by buying intent + urgency. Tier-1 weight 3.0, Tier-2 weight 2.0."},{"file":"timing-scout.js","label":"Timing Scout","output":"timing-windows.json","desc":"HN Algolia + GitHub Trending + Reddit Rising → velocity analysis. Finds topics gaining 2×+ momentum vs baseline."},{"file":"competitor-autopsist.js","label":"Competitor Autopsist","output":"competitor-failures.md","desc":"Mines competitor GitHub Issues for failure patterns. Converts failures into your copy angles."},{"file":"audience-locator.js","label":"Audience Locator","output":"audience-map.json","desc":"ICP location scoring by platform. Tells content-factory where your audience actually is vs assumed."},{"file":"hook-miner.js","label":"Hook Miner","output":"hook-recommendation.json","desc":"Scores hook formulas against this week's angle. Reads intelligence/patterns/hook-formulas.md."},{"file":"objection-mapper.js","label":"Objection Mapper","output":"objection-map.md","desc":"Maps competitor failures → pre-emption content. Stage 3-4 audience content."},{"file":"intelligence-synthesizer.js","label":"Synthesizer","output":"synthesis-brief.md","desc":"Merges all 6 outputs + memory/insights.json → one brief for Campaign Engine every Thursday."}],
+  campaign_agents:[{"file":"memory-parser.js","label":"Memory Parser","desc":"Step 1 Thu: Parses resonance-log.md → performance.json"},{"file":"memory-agent.js","label":"Memory Agent","desc":"Step 2 Thu: Reads performance.json → updates insights.json"},{"file":"intel-agent.js","label":"Intel Agent","desc":"Reads synthesis-brief.md. Optional web verification."},{"file":"strategy-agent.js","label":"Strategy Agent","desc":"4-persona deliberation → unified strategy brief for the week"},{"file":"funnel-router.js","label":"Funnel Router","desc":"Tags every piece TOFU/MOFU/BOFU. Flags if mix is off-target."},{"file":"content-factory.js","label":"Content Factory","desc":"All 15 platforms, parallel execution. One AI call per platform."},{"file":"image-generator.js","label":"Image Generator","desc":"Ideogram v3 → 14 image types → assets/generated/"},{"file":"voice-generator.js","label":"Voice Generator","desc":"ElevenLabs → MP3 voiceovers → assets/audio/"},{"file":"video-producer.js","label":"Video Producer","desc":"HeyGen avatar + Runway Gen-3 B-roll job submission + polling"},{"file":"email-sequence-agent.js","label":"Email Sequences","desc":"Welcome / nurture / win-back sequences from desire data"},{"file":"marketplace-agent.js","label":"Marketplace Agent","desc":"PH tagline, AppSumo listing, G2/Capterra copy generation"},{"file":"guardrail-agent.js","label":"Guardrail Agent","desc":"Scans all content for never_say violations + brand voice drift"},{"file":"content-mirror-agent.js","label":"Content Mirror","desc":"Quality gate: score vs elite standards. Rewrite if < 70."}],
+  dist_agents:    [{"file":"distributor.js","label":"Distributor","auto":null,"api":"Master orchestrator — routes to all 15 platform agents"},{"file":"dist-linkedin.js","label":"LinkedIn","auto":true,"api":"LinkedIn Pages API"},{"file":"dist-twitter-x.js","label":"Twitter/X","auto":true,"api":"X API v2 — tweets + threads"},{"file":"dist-instagram.js","label":"Instagram","auto":true,"api":"Instagram Graph API — Reels + Stories + carousel"},{"file":"dist-facebook.js","label":"Facebook","auto":true,"api":"Facebook Graph API — Groups + Page"},{"file":"dist-tiktok.js","label":"TikTok","auto":true,"api":"TikTok Content Posting API"},{"file":"dist-youtube.js","label":"YouTube","auto":true,"api":"YouTube Data API v3 — Shorts + long-form"},{"file":"dist-pinterest.js","label":"Pinterest","auto":true,"api":"Pinterest API v5"},{"file":"dist-threads.js","label":"Threads","auto":true,"api":"Threads API"},{"file":"dist-beehiiv.js","label":"Beehiiv","auto":false,"api":"Creates DRAFT only — founder sends"},{"file":"dist-reddit.js","label":"Reddit","auto":false,"api":"AMAE writes. Human posts. Ban risk is permanent."},{"file":"dist-quora.js","label":"Quora","auto":false,"api":"Human review recommended before posting"},{"file":"dist-github.js","label":"GitHub","auto":true,"api":"Blog deploy + Discussions + Releases + README"},{"file":"dist-producthunt.js","label":"Product Hunt","auto":true,"api":"PH API — upvote + comment seeding"},{"file":"dist-community.js","label":"Community","auto":false,"api":"Discord/Slack queue — human review required"}],
+  github_agents:  [{"file":"aeo-optimizer.js","label":"AEO Optimizer","desc":"README AEO scoring + FAQ schema injection"},{"file":"citation-tracker.js","label":"Citation Tracker","desc":"Track AI citation freq — ChatGPT, Perplexity, Claude"},{"file":"profile-readme-agent.js","label":"Profile README","desc":"Live dashboard on GitHub profile README — daily 06:00 UTC"},{"file":"launch-protocol-agent.js","label":"Launch Protocol","desc":"Full multi-channel launch sequence T-72h → T+7"},{"file":"awesome-list-agent.js","label":"Awesome List","desc":"Monthly PRs to high-DA awesome lists"},{"file":"star-velocity-agent.js","label":"Star Velocity","desc":"Coordinates launch stargazer signal on launch day"}],
+  evo_agents:     [{"file":"scout-agent.js","label":"Scout Agent","desc":"Scans GitHub weekly for elite marketing repos by velocity + watchlist.json. Index to intelligence/discovered/."},{"file":"twin-agent.js","label":"Twin Agent","desc":"Reads discovered repos, extracts patterns, translates to AMAE architecture. Writes to intelligence/patterns/."},{"file":"evolution-agent.js","label":"Evolution Agent","desc":"Compares discoveries vs current agents. Files self-upgrade PRs. NEVER auto-merges — founder decision always required."}],
+  lib:            [{"file":"anthropic.js","desc":"Claude Sonnet + Haiku wrapper","tier":"Paid","key":"ANTHROPIC_API_KEY"},{"file":"openrouter.js","desc":"OpenRouter free tier — primary AI","tier":"Free","key":"OPENROUTER_API_KEY"},{"file":"groq.js","desc":"Groq Llama 3.3 — fast classification","tier":"Free","key":"GROQ_API_KEY"},{"file":"reddit-api.js","desc":"Reddit JSON API — no auth required","tier":"Free","key":"none"},{"file":"hackernews-api.js","desc":"HN Algolia API — no auth required","tier":"Free","key":"none"},{"file":"github-api.js","desc":"Octokit wrapper + issue mining","tier":"Free","key":"GITHUB_TOKEN (auto)"},{"file":"ideogram-api.js","desc":"Ideogram v3 image generation","tier":"Free→Paid","key":"IDEOGRAM_API_KEY"},{"file":"heygen-api.js","desc":"HeyGen v2 avatar video","tier":"$29/mo","key":"HEYGEN_API_KEY"},{"file":"runway-api.js","desc":"Runway Gen-3 B-roll generation","tier":"$12/mo","key":"RUNWAY_API_KEY"},{"file":"elevenlabs-api.js","desc":"ElevenLabs TTS → MP3","tier":"Free→$11/mo","key":"ELEVENLABS_API_KEY"},{"file":"instagram-api.js","desc":"Instagram Graph API helper","tier":"Free","key":"INSTAGRAM_ACCESS_TOKEN"},{"file":"scoring-algorithms.js","desc":"Buying intent, urgency, quote scoring","tier":"—","key":"none"},{"file":"file-utils.js","desc":"All file I/O — all agents use this","tier":"—","key":"none"},{"file":"week-utils.js","desc":"ISO week helpers","tier":"—","key":"none"},{"file":"tweet-utils.js","desc":"Thread splitter, char counter","tier":"—","key":"none"},{"file":"blog-deployer.js","desc":"Compiles AEO blog → docs/ for Pages","tier":"—","key":"none"}],
+  workflows:      [{"file":"weekly-intelligence.yml","label":"Weekly Intelligence","day":"Tue 04:00 UTC","timeout":30,"desc":"7 intel agents → synthesis-brief.md"},{"file":"weekly-campaign.yml","label":"Weekly Campaign","day":"Thu 06:00 UTC","timeout":45,"desc":"13 campaign agents → PR with all assets"},{"file":"weekly-distribution.yml","label":"Weekly Distribution","day":"Fri 08:00 UTC","timeout":20,"desc":"Posts to all configured platforms"},{"file":"weekly-evolution.yml","label":"Weekly Evolution","day":"Sun 23:30 UTC","timeout":45,"desc":"Scout → Twin → Evolution PRs"},{"file":"on-issue-campaign.yml","label":"On-Demand Campaign","day":"Issue trigger","timeout":30,"desc":"Campaign Brief issue → PR in 20 min"},{"file":"on-pr-merge-distribute.yml","label":"On Merge → Publish","day":"On merge","timeout":20,"desc":"Merge campaign PR → posts everywhere"},{"file":"deploy-blog.yml","label":"AEO Blog + Dashboard","day":"On push/merge","timeout":15,"desc":"Builds dashboard.html + deploys to Pages"},{"file":"update-profile-readme.yml","label":"Profile README","day":"Daily 06:00","timeout":10,"desc":"Updates GitHub profile with live stats"},{"file":"launch-protocol.yml","label":"Launch Protocol","day":"Launch trigger","timeout":60,"desc":"T-72h → launch day → T+7 sequence"},{"file":"marketplace-refresh.yml","label":"Marketplace Refresh","day":"Monthly 1st","timeout":20,"desc":"Refreshes all marketplace listings monthly"},{"file":"monthly-growth.yml","label":"Monthly Growth","day":"Monthly 1st","timeout":30,"desc":"Awesome list PRs + topic audit"}],
+  prompts:        {"intelligence":["copy-excavator","timing-scout","competitor-autopsist","audience-locator","hook-miner","objection-mapper","synthesis"],"campaign":["intel-agent","strategy-agent","funnel-router","guardrail","content-mirror"],"content":["content-linkedin","content-twitter-x","content-instagram","content-facebook","content-tiktok","content-youtube-shorts","content-youtube-long","content-reddit","content-quora","content-pinterest","content-threads","content-newsletter","content-email-sequences","content-podcast-pitch","content-pr-release","content-aeo-cluster","content-community"],"media":["image-generation","video-production"],"marketplace":["marketplace-listing"],"evolution":["scout-agent","twin-agent","evolution-agent"]},
+  templates:      [{"file":"aeo-article-template.md","desc":"AEO article structure — question H2s, answer-first, FAQ schema"},{"file":"email-sequence-templates.md","desc":"Welcome / nurture / win-back 3-email sequences"},{"file":"launch-sequence.md","desc":"T-72h → launch day → T+7 full multi-channel sequence"},{"file":"linkedin-carousel.md","desc":"8-10 slide PDF carousel structure (1080×1080px)"},{"file":"marketplace-listing.md","desc":"PH tagline/gallery, AppSumo deal, G2/Capterra copy"},{"file":"reddit-formats.md","desc":"Long-form value post, story format, comment-first strategy"},{"file":"video-hooks.md","desc":"TikTok/Reels 2-second hook formulas by topic type"}],
+  issue_templates:[{"file":"campaign-brief.yml","label":"Campaign Brief","trigger":"on-issue-campaign.yml","fields":["Campaign Type","Hero Platform","Funnel Priority","The Angle","Verbatim Hook","Psychological Lever","Special Instructions"]},{"file":"launch-campaign.yml","label":"Launch Campaign","trigger":"launch-protocol.yml","fields":["Product Name","Launch Date","Launch Tier","Pre-launch Audience","Launch Day Goal","Special Instructions"]},{"file":"performance-update.yml","label":"Performance Update","trigger":"manual","fields":["Week","Resonance Signals","Platform","Notes","Hook Used","Next Angle"]}],
+  secrets:        [{"key":"OPENROUTER_API_KEY","phase":"Required","group":"AI","note":"Free tier — primary AI provider"},{"key":"ANTHROPIC_API_KEY","phase":"Required","group":"AI","note":"Strategy + Intel — Claude Sonnet/Haiku"},{"key":"GROQ_API_KEY","phase":"Required","group":"AI","note":"Free 14,400 req/day — fast classification"},{"key":"GITHUB_TOKEN","phase":"Auto","group":"GitHub","note":"Do NOT add manually — auto-injected by GitHub"},{"key":"LINKEDIN_ACCESS_TOKEN","phase":"Phase 3","group":"Social","note":""},{"key":"LINKEDIN_PERSON_URN","phase":"Phase 3","group":"Social","note":"Format: urn:li:person:XXXXXXXXX"},{"key":"TWITTER_API_KEY","phase":"Phase 3","group":"Social","note":""},{"key":"TWITTER_API_SECRET","phase":"Phase 3","group":"Social","note":""},{"key":"TWITTER_ACCESS_TOKEN","phase":"Phase 3","group":"Social","note":""},{"key":"TWITTER_ACCESS_SECRET","phase":"Phase 3","group":"Social","note":""},{"key":"THREADS_ACCESS_TOKEN","phase":"Phase 3","group":"Social","note":""},{"key":"THREADS_USER_ID","phase":"Phase 3","group":"Social","note":""},{"key":"BEEHIIV_API_KEY","phase":"Phase 3","group":"Newsletter","note":"Beehiiv Settings → API"},{"key":"BEEHIIV_PUBLICATION_ID","phase":"Phase 3","group":"Newsletter","note":""},{"key":"INSTAGRAM_ACCESS_TOKEN","phase":"Phase 4","group":"Visual","note":""},{"key":"INSTAGRAM_ACCOUNT_ID","phase":"Phase 4","group":"Visual","note":""},{"key":"FACEBOOK_PAGE_ACCESS_TOKEN","phase":"Phase 4","group":"Visual","note":""},{"key":"FACEBOOK_PAGE_ID","phase":"Phase 4","group":"Visual","note":""},{"key":"TIKTOK_ACCESS_TOKEN","phase":"Phase 4","group":"Visual","note":""},{"key":"TIKTOK_CLIENT_KEY","phase":"Phase 4","group":"Visual","note":""},{"key":"TIKTOK_CLIENT_SECRET","phase":"Phase 4","group":"Visual","note":""},{"key":"YOUTUBE_ACCESS_TOKEN","phase":"Phase 4","group":"Visual","note":""},{"key":"YOUTUBE_REFRESH_TOKEN","phase":"Phase 4","group":"Visual","note":""},{"key":"YOUTUBE_CLIENT_ID","phase":"Phase 4","group":"Visual","note":""},{"key":"YOUTUBE_CLIENT_SECRET","phase":"Phase 4","group":"Visual","note":""},{"key":"YOUTUBE_CHANNEL_ID","phase":"Phase 4","group":"Visual","note":""},{"key":"PINTEREST_ACCESS_TOKEN","phase":"Phase 4","group":"Visual","note":""},{"key":"PINTEREST_BOARD_ID","phase":"Phase 4","group":"Visual","note":""},{"key":"PRODUCTHUNT_API_TOKEN","phase":"Phase 4","group":"Marketplace","note":""},{"key":"IDEOGRAM_API_KEY","phase":"Phase 5","group":"Media","note":"25 free generations/day"},{"key":"ELEVENLABS_API_KEY","phase":"Phase 5","group":"Media","note":"10,000 chars/month free"},{"key":"ELEVENLABS_VOICE_ID","phase":"Phase 5","group":"Media","note":"ElevenLabs dashboard → Voices"},{"key":"HEYGEN_API_KEY","phase":"Phase 5","group":"Media","note":"Creator plan ~$29/mo"},{"key":"HEYGEN_VOICE_ID","phase":"Phase 5","group":"Media","note":"HeyGen dashboard → Voices"},{"key":"HEYGEN_AVATAR_ID","phase":"Phase 5","group":"Media","note":"HeyGen dashboard"},{"key":"RUNWAY_API_KEY","phase":"Phase 5","group":"Media","note":"Standard plan ~$12/mo"}],
+  scripts:        [{"cmd":"npm run intelligence","desc":"All 7 intel agents sequentially","when":"Test Tuesday pipeline locally"},{"cmd":"npm run campaign","desc":"All 13 campaign agents (memory → guardrail)","when":"Test Thursday pipeline locally"},{"cmd":"npm run media","desc":"image-generator + voice-generator + video-producer","when":"Test media production"},{"cmd":"npm run distribute","desc":"distributor.js → posts to all configured platforms","when":"Manual distribution"},{"cmd":"npm run evolution","desc":"Scout → Twin → Evolution (files PRs)","when":"Test evolution system locally"},{"cmd":"npm run memory","desc":"memory-parser + memory-agent","when":"Rebuild memory from resonance-log.md"},{"cmd":"npm run test:reddit","desc":"Fetches 2 posts — validates Reddit API","when":"Verify network / API"},{"cmd":"npm run test:openrouter","desc":"Sends test prompt — validates AI key","when":"Verify OPENROUTER_API_KEY"},{"cmd":"npm run test:ideogram","desc":"Generates 1 test image — validates key","when":"Verify IDEOGRAM_API_KEY"},{"cmd":"npm run check","desc":"Node syntax check on all agents/ + lib/","when":"Before committing changes"},{"cmd":"npm run dev","desc":"Runs copy-excavator.js with .env loaded","when":"Local development"}],
+  intel_dirs:     [{"path":"intelligence/weekly/","desc":"Written Tuesday. Read Thursday. copy-ammunition.md, timing-windows.json, synthesis-brief.md"},{"path":"intelligence/evergreen/","desc":"Accumulates best material: copy-swipe-file.md, objection-library.md, platform-intel.md"},{"path":"intelligence/patterns/","desc":"hook-formulas.md, prompt-architectures.md, platform-mechanics.md, workflow-patterns.md"},{"path":"intelligence/absorbed/","desc":"Fully absorbed repos — index.json tracks what was learned"},{"path":"intelligence/discovered/","desc":"Found by Scout, awaiting Twin Agent processing"},{"path":"intelligence/holding/","desc":"Relevant repos not yet absorbed — review manually"},{"path":"intelligence/discarded/","desc":"Reviewed and rejected — index.json with reason"}],
+  memory_files:   [{"file":"memory/performance.json","desc":"Platform resonance tracking. Updated by memory-parser.js from resonance-log.md."},{"file":"memory/insights.json","desc":"Written by memory-agent.js. Read by synthesizer before every campaign."},{"file":"memory/hook-performance.json","desc":"Which hook formulas work for THIS product. Grows over time with each campaign."},{"file":"memory/funnel-performance.json","desc":"TOFU/MOFU/BOFU conversion tracking. Informs funnel-router.js content mix."},{"file":"memory/citations.json","desc":"AI citation tracking — ChatGPT, Perplexity, Claude. Updated by citation-tracker.js."},{"file":"memory/brand-voice.md","desc":"Founder-filled voice guide. phrases_that_sound_like_you + never_say list."},{"file":"memory/content-standards.json","desc":"Elite content benchmarks. content-mirror-agent.js scores against these (min 70)."}],
+  analytics_files:[{"file":"analytics/campaigns/","desc":"One JSON per week — full campaign archive. Written by content-factory.js."},{"file":"analytics/distribution-log.jsonl","desc":"Append-only log of every distribution event. Written by distributor.js."},{"file":"analytics/funnel-metrics.json","desc":"TOFU/MOFU/BOFU snapshots. Read by memory-agent.js to adjust weekly mix."},{"file":"analytics/marketplace-stats.json","desc":"PH votes, G2 reviews, AppSumo sales. Updated manually by founder."},{"file":"analytics/resonance-log.md","desc":"Founder updates after each real signal. memory-parser.js reads it every Thursday."}],
+  platform_rules: {"linkedin":{"label":"LinkedIn","rules":["Max 1800 chars (optimal 1200)","NO external links — 68% reach reduction confirmed","Never start with I / We / Our / Today","Best: text post, carousel PDF, document post","Algorithm signals ranked: dwell time, saves, comments, reactions"]},"twitter_x":{"label":"Twitter/X","rules":["Thread 7-9 tweets optimal","Hook tweet standalone — no link in tweet 1","Link in LAST tweet only","Reply volume first 60 min = primary reach signal","Numbering 1/ 2/ 3/ — algorithm favors it"]},"instagram":{"label":"Instagram","rules":["Reels 28s optimal, 2-second hook window","3-5 niche hashtags only","Caption 150 chars optimal","Completion rate = primary signal","Custom cover image — native 20-30% lower reach"]},"tiktok":{"label":"TikTok","rules":["2-second hook window — scroll if missed","30s optimal (60s max)","Daily posting rewarded above all platforms","Completion rate + watch time primary signals","Caption 150 chars max"]},"reddit":{"label":"Reddit","rules":["AMAE WRITES — HUMAN POSTS (ban risk permanent, IP-level)","AEO value: VERY HIGH — in GPT-4, Claude, Gemini training data","No self-promo in first 3 paragraphs","Build 100+ comment karma before posting own content","Title: Specific result + situation they recognize"]},"quora":{"label":"Quora","rules":["HUMAN REVIEW recommended before posting","AEO value: HIGH — ranks in Google + AI answers","Direct answer first (2 sentences), then experience","No marketing language — first-person, specific","Product mention at the very end only"]},"newsletter":{"label":"Newsletter","rules":["AMAE creates draft in Beehiiv — HUMAN SENDS","600 words optimal","Structure: insight + resource + action + question","Subject: [Number or outcome]: [what they get inside]","Tuesday 10am recipient timezone — highest open rates"]},"youtube_long":{"label":"YouTube Long","rules":["10-min optimal","First 30s must state the payoff clearly","Chapters required","50% CTR + 40% watch time both critical","Never: filler content, vague titles without keyword"]},"youtube_short":{"label":"YouTube Shorts","rules":["45s optimal (60s max)","Hook in first 3 seconds","Vertical 9:16 format","Completion rate primary signal","Never: slow intros, black screens, no context"]},"facebook":{"label":"Facebook","rules":["Optimal copy 80 chars","Line breaks every 2-3 sentences","Native video outperforms links","Comments weighted 5× over likes","Never: political content, link-only posts"]},"pinterest":{"label":"Pinterest","rules":["2:3 vertical ratio — horizontal ignored","Keyword-rich descriptions (it's a search engine)","Save-worthy content only — save rate is primary signal","Evergreen content only — trends useless","500 char caption max"]},"threads":{"label":"Threads","rules":["Similar mechanics to Twitter/X","Cross-post from Instagram for authority signal","Early-mover advantage — algorithm less saturated","Building audience: prioritize replies over posts"]}},
+};
+const LIVE = {"meta":{"week":"2026-W11","today":"2026-03-11","generatedAt":"2026-03-11T13:43:53.841Z"},"product":{"name":"AMAE","stage":"pre-launch","dna":{"pct":0,"missing":["what_they_secretly_want","what_they_fear_most","what_they_are_frustrated_by","who_they_want_to_become"],"filled":[]},"icp":{"primary":"Solo SaaS founders","subreddits":["r/sideproject","r/indiehackers"]},"desire":{"what_they_secretly_want":"FILL_IN: test","what_they_fear_most":"FILL_IN: test","what_they_are_frustrated_by":"FILL_IN: test","who_they_want_to_become":"FILL_IN: test"},"solution":{},"pricing":{}},"brandVoice":{},"brandVoiceText":"","perf":{"weeks_tracked":3,"resonance_signals_total":2,"weeks_without_resonance":0,"platforms":{"linkedin":{"posts_published":6,"resonance_signals_total":2,"notes":""}}},"insights":{"recommendation":"Lead with verbatim Reddit hook. Stage 2 content. Loss aversion lever.","what_is_working":["LinkedIn text posts under 800 chars"],"what_is_not_working":[],"alert":null},"hookPerf":{},"funnelP":{},"funnelMet":{},"mktStats":{},"citations":{},"absorbed":[],"discarded":[],"campaigns":[],"resonanceLog":"## W11 Resonance Log\n2026-03-07 | Comment | LinkedIn | \"this is literally me every week\"\n","synthBrief":"# Synthesis Brief W11\nMass desire: escape the trap of managing tools instead of growing. Awareness stage 2. Verbatim hook: I spend more time managing my tools than actually growing my business.\n","sched":{},"subreddits":["r/sideproject","r/indiehackers"],"secretsSet":[],"platRulesLive":{}};
+
+function init(){
+  initTabs();
+  renderHeader();
+  renderOverview();
+  renderIntelligence();
+  renderStrategy();
+  renderCampaigns();
+  renderContentSection('prompts');
+  renderMedia();
+  renderDistribution();
+  renderEvolution();
+  renderGitHub();
+  renderMarketplace();
+  renderMemory();
+  renderResonance();
+  renderConfig();
+  renderDevTools();
+  renderCost();
+}
+init();
+
+</script>
+</body>
+</html>
