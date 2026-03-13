@@ -48,7 +48,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci --prefer-offline
+        run: npm install
 
       - name: Copy latest AEO articles to docs/blog
         run: node lib/blog-deployer.js
